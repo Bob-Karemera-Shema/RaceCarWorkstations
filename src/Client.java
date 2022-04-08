@@ -134,7 +134,7 @@ public class Client
       sendMessage("identify " + kartType);
       sendKart();
       
-      sendMessage("Initialisation Done!");
+      sendMessage("Ping");
       window = new Frame();
    }
    

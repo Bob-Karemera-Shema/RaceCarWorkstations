@@ -115,8 +115,8 @@ class ClientHandler implements Runnable
       } catch (Exception e) 
       {}
    }
-   
-   /*private void sendForeignKart()
+
+   private void sendForeignKart()
    {
       Kart kartToSend = null;
    
@@ -134,7 +134,7 @@ class ClientHandler implements Runnable
       }
       
       sendKart(kartToSend);
-   }*/
+   }
    
    private void sendOwnKart() 
    {
@@ -207,7 +207,7 @@ class ClientHandler implements Runnable
          case "own_kart_update":
             
             receiveKart();
-            sendOwnKart();
+            sendForeignKart();
             
             break;
       }
