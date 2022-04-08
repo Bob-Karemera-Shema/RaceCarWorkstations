@@ -119,44 +119,24 @@ class ClientHandler implements Runnable
    private void sendForeignKart()
    {
       Kart kartToSend = null;
-   
+
       sendMessage("foreign_kart_update");
-      
-      switch (kartType) 
+
+      switch (kartType)
       {
          case "blue":
             kartToSend = kartRed;
             break;
-            
+
          case "red":
             kartToSend = kartBlue;
             break;
       }
-      
+
       sendKart(kartToSend);
    }
    
-   private void sendOwnKart() 
-   {
-      Kart kartToSend = null;
-   
-      sendMessage("own_kart_update");
-      
-      switch (kartType) 
-      {
-         case "blue":
-            kartToSend = kartBlue;
-            break;
-            
-         case "red":
-            kartToSend = kartRed;
-            break;
-      }
-      
-      sendKart(kartToSend);
-   }
-   
-   private void receiveKart() 
+   private void receiveKart()
    {
       Kart inputKart = null;
       
@@ -188,14 +168,6 @@ class ClientHandler implements Runnable
       
       switch (responseParts[0]) 
       {
-         case "ping":
-            
-            try { Thread.sleep(1000); } catch (Exception e) {}
-         
-            sendMessage("pong");
-         
-            break;
-      
          case "identify":
             
             kartType = responseParts[1];
@@ -208,7 +180,7 @@ class ClientHandler implements Runnable
             
             receiveKart();
             sendForeignKart();
-            
+
             break;
       }
    }

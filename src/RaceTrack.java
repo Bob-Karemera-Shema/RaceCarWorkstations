@@ -18,9 +18,12 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         setBackground(Color.green);
         setFocusable(true);
         Client.getOwnKart().initialPosition(425, 500);                             //initialise the position of the first kart object
-        Client.getForeignKart().initialPosition(425, 600);                         //initialise the position of the second kart object
-        Client.getOwnKart().populateImageArray();                                                         //load kart 1 images
-        Client.getForeignKart().populateImageArray();                                                         //load kart 2 images
+        Client.getOwnKart().populateImageArray();                                        //load kart 1 images
+
+        if (Client.getForeignKart() != null) {
+            Client.getForeignKart().initialPosition(425, 600);                         //initialise the position of the second kart object
+            Client.getForeignKart().populateImageArray();                                    //load kart 2 images
+        }
         this.addKeyListener(this);
 
         StartAnimation();
@@ -49,7 +52,9 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
 
         //Draw karts
         Client.getOwnKart().getCurrentImage().paintIcon(this, g, Client.getOwnKart().getLocation().x, Client.getOwnKart().getLocation().y);
-        Client.getForeignKart().getCurrentImage().paintIcon(this, g, Client.getForeignKart().getLocation().x,
+
+        if (Client.getForeignKart() != null)
+            Client.getForeignKart().getCurrentImage().paintIcon(this, g, Client.getForeignKart().getLocation().x,
                 Client.getForeignKart().getLocation().y);
 
         if(animationTimer.isRunning())                  //Only refreshes kart locations if timer is running
@@ -113,20 +118,19 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
 
     public void collisionDetection()                //collision detection method
     {
-        //Collision detection between karts
-        if((Client.getForeignKart().getLocation().y >= Client.getOwnKart().getLocation().y &&
-                Client.getForeignKart().getLocation().y <= Client.getOwnKart().getLocation().y + 40)
-                || (Client.getForeignKart().getLocation().y + 40 >= Client.getOwnKart().getLocation().y &&
-                Client.getForeignKart().getLocation().y + 40 <= Client.getOwnKart().getLocation().y + 40))
-        {   //if the karts collide vertically
-            if(Client.getOwnKart().getLocation().x + 45 >= Client.getForeignKart().getLocation().x &&
-                    !(Client.getOwnKart().getLocation().x >= Client.getForeignKart().getLocation().x + 45))
-            {  //and if the karts collide horizontally
-                Client.getOwnKart().stopKart();
-                Client.getForeignKart().stopKart();
+        if (Client.getForeignKart() != null) {
+            //Collision detection between karts
+            if ((Client.getForeignKart().getLocation().y >= Client.getOwnKart().getLocation().y &&
+                    Client.getForeignKart().getLocation().y <= Client.getOwnKart().getLocation().y + 40)
+                    || (Client.getForeignKart().getLocation().y + 40 >= Client.getOwnKart().getLocation().y &&
+                    Client.getForeignKart().getLocation().y + 40 <= Client.getOwnKart().getLocation().y + 40)) {   //if the karts collide vertically
+                if (Client.getOwnKart().getLocation().x + 45 >= Client.getForeignKart().getLocation().x &&
+                        !(Client.getOwnKart().getLocation().x >= Client.getForeignKart().getLocation().x + 45)) {  //and if the karts collide horizontally
+                    Client.getOwnKart().stopKart();
+                    Client.getForeignKart().stopKart();
+                }
             }
         }
-
         //Collision detection between karts and racetrack bounds
         Client.getOwnKart().checkOuterCollision();
         Client.getOwnKart().checkInnerCollision(new Rectangle( 150, 200, 550, 300 ));     //inner edge bounds

@@ -6,15 +6,19 @@ public class Frame extends JFrame
     public Frame()
     {
         //Set up Frame Visual look
-        setTitle("Race Animation");
+        setTitle("Race Game");
         setBounds(0,0,1000,1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
 
         //Create container
         Container container = getContentPane();
 
-        //Create a kart instance and add it to the container
-        container.add(new RaceTrack());
+        //Create a racetrack instance
+        new RaceTrack();
     }
+    /*public static void main(String[] args)
+    {
+        Frame window = new Frame();
+        window.setVisible(true);
+    }*/
 }

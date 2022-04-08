@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
 
-public class Kart implements Serializable {
+public class Kart {
     private Point location;                             //current kart location
     private float speed;                                //current kart speed
     private int direction;                              //moving kart direction
@@ -51,8 +51,8 @@ public class Kart implements Serializable {
         }
         catch (Exception e)
         {
-            //JOptionPane.showMessageDialog(this,"Images not found",
-            //        "Loading error",JOptionPane.ERROR_MESSAGE); //inform user
+            JOptionPane.showMessageDialog(null,"Images not found",
+                    "Loading error",JOptionPane.ERROR_MESSAGE); //inform user
         }
     }
 

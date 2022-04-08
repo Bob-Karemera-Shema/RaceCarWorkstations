@@ -94,8 +94,6 @@ public class Client
                
    				if(responseLine != null)
    				{
-   					System.out.println("SERVER: " + responseLine);
-                  
                   handleServerResponse(responseLine);
    				}
                
@@ -131,11 +129,21 @@ public class Client
    
       sendMessage("identify " + kartType);
       sendKart();
-      
-      sendMessage("Ping");
+
       window = new Frame();
+       window.setVisible(true);
    }
-   
+
+    public static Kart getOwnKart()
+    {
+        return ownKart;
+    }
+
+    public static Kart getForeignKart()
+    {
+        return foreignKart;
+    }
+
    private static void sendKart() 
    {
       try 
@@ -151,15 +159,6 @@ public class Client
       sendMessage("own_kart_update");
       sendKart();
       receiveForeignKart();
-   }
-   
-   private static void receiveOwnKart() 
-   {
-      try 
-      {
-         ownKart = (Kart) objectInput.readObject();
-      } catch (Exception e) 
-      {}
    }
    
    private static void receiveForeignKart() 
@@ -195,19 +194,6 @@ public class Client
    {
       switch (response) 
       {
-         case "pong":
-            
-            try { Thread.sleep(1000); } catch (Exception e) {}
-            
-            //sendMessage("ping");
-            
-            break;
-         
-         case "own_kart_update":
-            
-            receiveOwnKart();
-            
-            break;
          case "foreign_kart_update":
          
             receiveForeignKart();
@@ -220,14 +206,4 @@ public class Client
    {
       // shutdown script
    }
-
-   public static Kart getOwnKart()
-   {
-       return ownKart;
-   }
-
-    public static Kart getForeignKart()
-    {
-        return foreignKart;
-    }
 }
