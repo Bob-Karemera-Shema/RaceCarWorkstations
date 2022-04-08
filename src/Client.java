@@ -26,7 +26,6 @@ public class Client
    private static Kart foreignKart = null;
 
    private static Frame window;
-   private static JFrame messageDisplay;
    // "blue" / "red"
    private static String kartType;
 
@@ -34,7 +33,6 @@ public class Client
 	{
       String errorMessage = "Kart designation need to be provided as either 'red' or 'blue'.";
 
-      messageDisplay = new JFrame();
       kartType = JOptionPane.showInputDialog(null, "Enter kart of your choice",
               "Kart Choice",JOptionPane.WARNING_MESSAGE);
 
