@@ -16,9 +16,4 @@ public class Frame extends JFrame
         //Create a racetrack instance
         new RaceTrack();
     }
-    /*public static void main(String[] args)
-    {
-        Frame window = new Frame();
-        window.setVisible(true);
-    }*/
 }

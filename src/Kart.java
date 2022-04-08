@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
 
-public class Kart {
+public class Kart implements Serializable{
     private Point location;                             //current kart location
     private float speed;                                //current kart speed
     private int direction;                              //moving kart direction
@@ -27,12 +27,12 @@ public class Kart {
     public void populateImageArray()
     {
         //Load images to display the kart as it moves on the screen
-        if(kartColor.equals("kartRed"))
+        if(kartColor.equals("Red"))
         {
             loadKartImages(1);
         }
 
-        if(kartColor.equals("kartBlue"))
+        if(kartColor.equals("Blue"))
         {
             loadKartImages(2);
         }
@@ -45,7 +45,7 @@ public class Kart {
         {
             for (int i = 0; i < totalImages; i++)            //load kart images to array
             {
-                kartImages[i] = new ImageIcon(getClass().getResource("images" + folderNumber + "/"
+                kartImages[i] = new ImageIcon(getClass().getResource("images" + folderNumber + "/kart"
                         + kartColor + i + ".png"));
             }
         }

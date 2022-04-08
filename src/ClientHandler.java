@@ -124,11 +124,11 @@ class ClientHandler implements Runnable
 
       switch (kartType)
       {
-         case "blue":
+         case "Blue":
             kartToSend = kartRed;
             break;
 
-         case "red":
+         case "Red":
             kartToSend = kartBlue;
             break;
       }
@@ -148,11 +148,11 @@ class ClientHandler implements Runnable
       
       switch (kartType) 
       {
-         case "blue":
+         case "Blue":
             kartBlue = inputKart;
             break;
             
-         case "red":
+         case "Red":
             kartRed = inputKart;
             break;
       }

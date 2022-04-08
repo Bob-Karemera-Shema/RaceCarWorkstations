@@ -10,6 +10,8 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
 {
     private final int animationDelay = 100;             //animation delay in milliseconds
     private Timer animationTimer;                       //Timer tool for animation
+    private Kart ownKart = null;
+    private Kart foreignKart = null;
 
     public RaceTrack()
     {
@@ -17,12 +19,14 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         setBounds(0,0,850,650);
         setBackground(Color.green);
         setFocusable(true);
-        Client.getOwnKart().initialPosition(425, 500);                             //initialise the position of the first kart object
-        Client.getOwnKart().populateImageArray();                                        //load kart 1 images
+        ownKart = Client.getOwnKart();
+        ownKart.initialPosition(425, 500);                             //initialise the position of the first kart object
+        ownKart.populateImageArray();                                        //load kart 1 images
 
-        if (Client.getForeignKart() != null) {
-            Client.getForeignKart().initialPosition(425, 600);                         //initialise the position of the second kart object
-            Client.getForeignKart().populateImageArray();                                    //load kart 2 images
+        foreignKart = Client.getForeignKart();
+        if (foreignKart != null) {
+            foreignKart.initialPosition(425, 600);                         //initialise the position of the second kart object
+            foreignKart.populateImageArray();                                    //load kart 2 images
         }
         this.addKeyListener(this);
 
@@ -51,15 +55,18 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         g.drawLine( 425, 500, 425, 600 ); // start line
 
         //Draw karts
-        Client.getOwnKart().getCurrentImage().paintIcon(this, g, Client.getOwnKart().getLocation().x, Client.getOwnKart().getLocation().y);
+        ownKart.getCurrentImage().paintIcon(this, g, ownKart.getLocation().x, ownKart.getLocation().y);
 
-        if (Client.getForeignKart() != null)
-            Client.getForeignKart().getCurrentImage().paintIcon(this, g, Client.getForeignKart().getLocation().x,
-                Client.getForeignKart().getLocation().y);
+        if (foreignKart != null)
+        {
+            foreignKart.getCurrentImage().paintIcon(this, g, foreignKart.getLocation().x,
+                    foreignKart.getLocation().y);
+        }
 
         if(animationTimer.isRunning())                  //Only refreshes kart locations if timer is running
         {
-            Client.getOwnKart().displaceKart();
+            ownKart.displaceKart();
+            Client.setOwnKart(ownKart);
             Client.sendOwnKart();
             collisionDetection();
         }
@@ -95,19 +102,19 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_UP)                        //increase kart1 speed if up key is pressed
         {
-            Client.getOwnKart().increaseSpeed();
+            ownKart.increaseSpeed();
         }
         else if (e.getKeyCode() == KeyEvent.VK_DOWN)                //decrease kart1 speed if down key is pressed
         {
-            Client.getOwnKart().decreaseSpeed();
+            ownKart.decreaseSpeed();
         }
         else if (e.getKeyCode() == KeyEvent.VK_LEFT)                //turn kart1 left if left key is pressed
         {
-            Client.getOwnKart().updateDirection("left");
+            ownKart.updateDirection("left");
         }
         else if (e.getKeyCode() == KeyEvent.VK_RIGHT)               //turn kart1 right if right key is pressed
         {
-            Client.getOwnKart().updateDirection("right");
+            ownKart.updateDirection("right");
         }
     }
 
@@ -118,24 +125,27 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
 
     public void collisionDetection()                //collision detection method
     {
-        if (Client.getForeignKart() != null) {
+        if (foreignKart != null) {
             //Collision detection between karts
-            if ((Client.getForeignKart().getLocation().y >= Client.getOwnKart().getLocation().y &&
-                    Client.getForeignKart().getLocation().y <= Client.getOwnKart().getLocation().y + 40)
-                    || (Client.getForeignKart().getLocation().y + 40 >= Client.getOwnKart().getLocation().y &&
-                    Client.getForeignKart().getLocation().y + 40 <= Client.getOwnKart().getLocation().y + 40)) {   //if the karts collide vertically
-                if (Client.getOwnKart().getLocation().x + 45 >= Client.getForeignKart().getLocation().x &&
-                        !(Client.getOwnKart().getLocation().x >= Client.getForeignKart().getLocation().x + 45)) {  //and if the karts collide horizontally
-                    Client.getOwnKart().stopKart();
-                    Client.getForeignKart().stopKart();
+            if ((foreignKart.getLocation().y >= ownKart.getLocation().y && foreignKart.getLocation().y <= ownKart.getLocation().y + 40)
+                    || (foreignKart.getLocation().y + 40 >= ownKart.getLocation().y &&
+                    foreignKart.getLocation().y + 40 <= ownKart.getLocation().y + 40))
+            {   //if the karts collide vertically
+                if (ownKart.getLocation().x + 45 >= foreignKart.getLocation().x &&
+                        !(ownKart.getLocation().x >= foreignKart.getLocation().x + 45))
+                {  //and if the karts collide horizontally
+                    ownKart.stopKart();
+                    foreignKart.stopKart();
                 }
             }
         }
         //Collision detection between karts and racetrack bounds
-        Client.getOwnKart().checkOuterCollision();
-        Client.getOwnKart().checkInnerCollision(new Rectangle( 150, 200, 550, 300 ));     //inner edge bounds
+        ownKart.checkOuterCollision();
+        ownKart.checkInnerCollision(new Rectangle( 150, 200, 550, 300 ));     //inner edge bounds
 
-        Client.getForeignKart().checkOuterCollision();
-        Client.getForeignKart().checkInnerCollision(new Rectangle( 150, 200, 550, 300  ));    //inner edge bounds
+        if (foreignKart != null) {
+            foreignKart.checkOuterCollision();
+            foreignKart.checkInnerCollision(new Rectangle(150, 200, 550, 300));    //inner edge bounds
+        }
     }
 }

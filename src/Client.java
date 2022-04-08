@@ -25,7 +25,6 @@ public class Client
    private static Kart ownKart = null;
    private static Kart foreignKart = null;
 
-   private static Frame window;
    // "blue" / "red"
    private static String kartType;
 
@@ -38,7 +37,7 @@ public class Client
 
       if (!kartType.equals(null))
       {
-         if (!kartType.equals("blue") && !kartType.equals("red")) 
+         if (!kartType.equals("Blue") && !kartType.equals("Red"))
          {
             System.err.println(errorMessage);
             return;
@@ -48,7 +47,7 @@ public class Client
          System.err.println(errorMessage);
          return;
       }
-												  
+
 		// Create a socket on port 5000 and open input and output streams on that socket
 		try
 		{
@@ -87,7 +86,8 @@ public class Client
 			try
 			{
             initialise();
-            
+            new Frame().setVisible(true);
+
             do 
             {
                responseLine = receiveMessage();
@@ -129,15 +129,14 @@ public class Client
    
       sendMessage("identify " + kartType);
       sendKart();
-
-      window = new Frame();
-       window.setVisible(true);
    }
 
-    public static Kart getOwnKart()
+   public static Kart getOwnKart()
     {
         return ownKart;
     }
+
+    public static void setOwnKart(Kart updateKart) { ownKart = updateKart; }
 
     public static Kart getForeignKart()
     {
