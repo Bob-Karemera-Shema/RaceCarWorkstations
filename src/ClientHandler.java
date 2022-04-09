@@ -116,6 +116,26 @@ class ClientHandler implements Runnable
       {}
    }
 
+   private void sendOwnKart()
+   {
+      Kart kartToSend = null;
+
+      sendMessage("own_kart_update");
+
+      switch (kartType)
+      {
+         case "blue":
+            kartToSend = kartBlue;
+            break;
+
+         case "red":
+            kartToSend = kartRed;
+            break;
+      }
+
+      sendKart(kartToSend);
+   }
+
    private void sendForeignKart()
    {
       Kart kartToSend = null;
@@ -157,6 +177,58 @@ class ClientHandler implements Runnable
             break;
       }
    }
+
+   private void assignAvailableKart(String color)
+   {
+      //If desired kart is already taken,
+      //assign another kart of different color
+      Kart inputKart = null;
+
+      try
+      {
+         inputKart = (Kart) objectInput.readObject();
+      } catch (Exception e)
+      {}
+
+      switch (color)
+      {
+         case "Blue":
+            inputKart = new Kart("Red");
+            kartRed = inputKart;
+            break;
+
+         case "Red":
+            inputKart = new Kart("Blue");
+            kartBlue = inputKart;
+            break;
+      }
+   }
+
+   private boolean checkKartAvailability(String color)
+   {
+      if(color.equals("Blue"))
+      {
+         if (kartBlue == null)
+         {
+            return true;
+         }
+         else
+         {
+            return false;
+         }
+      }
+      else
+      {
+         if(kartRed == null)
+         {
+            return true;
+         }
+         else
+         {
+            return false;
+         }
+      }
+   }
    
    private void handleClientResponse(String response)
    {
@@ -169,11 +241,14 @@ class ClientHandler implements Runnable
       switch (responseParts[0]) 
       {
          case "identify":
-            
-            kartType = responseParts[1];
-            
-            receiveKart();
-            
+            if(checkKartAvailability(responseParts[1])) {
+               kartType = responseParts[1];
+               receiveKart();
+            }
+            else
+            {
+               assignAvailableKart(responseParts[1]);
+            }
             break;
             
          case "own_kart_update":

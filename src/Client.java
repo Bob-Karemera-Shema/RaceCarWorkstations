@@ -1,3 +1,4 @@
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -25,6 +26,8 @@ public class Client
    private static Kart ownKart = null;
    private static Kart foreignKart = null;
 
+   private static Frame window = null;
+
    // "blue" / "red"
    private static String kartType;
 
@@ -33,7 +36,7 @@ public class Client
       String errorMessage = "Kart designation need to be provided as either 'red' or 'blue'.";
 
       kartType = JOptionPane.showInputDialog(null, "Enter kart of your choice",
-              "Kart Choice",JOptionPane.WARNING_MESSAGE);
+              "Kart Choice",JOptionPane.INFORMATION_MESSAGE);
 
       if (!kartType.equals(null))
       {
@@ -86,7 +89,8 @@ public class Client
 			try
 			{
             initialise();
-            new Frame().setVisible(true);
+            window = new Frame();
+            window.setVisible(true);
 
             do 
             {
@@ -126,7 +130,6 @@ public class Client
    {
       // initialise our client's own kart object
       ownKart = new Kart( kartType );
-   
       sendMessage("identify " + kartType);
       sendKart();
    }
@@ -159,7 +162,16 @@ public class Client
       sendKart();
       receiveForeignKart();
    }
-   
+
+    private static void receiveOwnKart()
+    {
+        try
+        {
+            ownKart = (Kart) objectInput.readObject();
+        } catch (Exception e)
+        {}
+    }
+
    private static void receiveForeignKart() 
    {
       try 
@@ -167,6 +179,11 @@ public class Client
          foreignKart = (Kart) objectInput.readObject();
       } catch (Exception e) 
       {}
+   }
+
+   private static void deleteForeignKart()
+   {
+       foreignKart = null;
    }
    
    private static String receiveMessage() 
@@ -188,21 +205,60 @@ public class Client
       } catch (Exception e) 
       {}
    }
+
+   public static void sendCollisionDetected(String message)
+    {
+        sendMessage(message);
+        sendKart();
+        receiveForeignKart();
+
+        JOptionPane.showMessageDialog(window, "Your kart crashed!" +
+                " Player 2 wins the race", "Collision Detected", JOptionPane.ERROR_MESSAGE);
+
+        shutdownClient();
+    }
+
+   private static void foreignKartCollisionTrackEdge(String collisionArea)
+   {
+        //inform client foreign kart has collided with track edge.
+        int response = JOptionPane.showConfirmDialog(window, "Player 2 kart Crashed!. " +
+                   "Would you like to continue racing?","Collision Detected", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+       if(response == JOptionPane.YES_NO_OPTION)
+       {  shutdownClient();  }
+       else {  deleteForeignKart(); }
+   }
    
    private static void handleServerResponse(String response) 
    {
       switch (response) 
       {
-         case "foreign_kart_update":
+          case "own_kart_update":
+
+              receiveOwnKart();
+
+              break;
+
+          case "foreign_kart_update":
          
             receiveForeignKart();
             
             break;
+
+          case "collision_with_track_edge":
+              foreignKartCollisionTrackEdge("track");
+              break;
+          case "collision_with_foreign_kart":
+              break;
+          case "collision_with_grass":
+              foreignKartCollisionTrackEdge("grass");
+              break;
       }
    }
    
    private static void shutdownClient() 
    {
-      // shutdown script
+       window.windowClosed(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+       sendMessage("CLOSE");
    }
 }

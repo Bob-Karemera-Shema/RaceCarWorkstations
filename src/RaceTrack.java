@@ -20,7 +20,7 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         setBackground(Color.green);
         setFocusable(true);
         ownKart = Client.getOwnKart();
-        ownKart.initialPosition(425, 500);                             //initialise the position of the first kart object
+        Client.getOwnKart().initialPosition(425, 500);                 //initialise own kart the position
         ownKart.populateImageArray();                                        //load kart 1 images
 
         foreignKart = Client.getForeignKart();
@@ -136,6 +136,7 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                 {  //and if the karts collide horizontally
                     ownKart.stopKart();
                     foreignKart.stopKart();
+                    Client.sendCollisionDetected("collision_with_foreign_kart");
                 }
             }
         }

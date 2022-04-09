@@ -200,24 +200,28 @@ public class Kart implements Serializable{
         {
             setLocationX(50);
             stopKart();
+            Client.sendCollisionDetected("collision_with_track_edge");
         }
 
         if(getLocation().x > 750)
         {
             setLocationX(750);
             stopKart();
+            Client.sendCollisionDetected("collision_with_track_edge");
         }
 
         if(getLocation().y < 100)
         {
             setLocationY(100);
             stopKart();
+            Client.sendCollisionDetected("collision_with_track_edge");
         }
 
         if(getLocation().y > 550)
         {
             setLocationY(550);
             stopKart();
+            Client.sendCollisionDetected("collision_with_track_edge");
         }
     }
 
@@ -226,6 +230,7 @@ public class Kart implements Serializable{
         if(getBounds().intersects(innerBound))
         {
             stopKart();
+            Client.sendCollisionDetected("collision_with_grass");
         }
     }
 }
