@@ -179,7 +179,6 @@ public class Client
          foreignKart = (Kart) objectInput.readObject();
       } catch (Exception e) 
       {
-          System.out.println("Can't get foreign kart");
       }
    }
 
@@ -230,6 +229,14 @@ public class Client
    {
       switch (response) 
       {
+          case "pong":
+
+          try { Thread.sleep(1000); } catch (Exception e) {}
+
+          sendMessage("ping");
+
+          break;
+
           case "own_kart_update":
 
               receiveOwnKart();

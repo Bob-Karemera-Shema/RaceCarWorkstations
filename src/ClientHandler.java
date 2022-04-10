@@ -238,7 +238,16 @@ class ClientHandler implements Runnable
       // "identify red" => [ "identify", "red" ]
       // "kart_update" => [ "kart_update" ]
       String[] responseParts = response.split(" ");
-      
+
+      if(responseParts[0].equals("ping")) {
+         try {
+            Thread.sleep(1000);
+         } catch (Exception e) {
+         }
+
+         sendMessage("pong");
+      }
+
       if(responseParts[0].equals("identify")) {
          if (checkKartAvailability(responseParts[1])) {
             kartType = responseParts[1];
@@ -251,7 +260,8 @@ class ClientHandler implements Runnable
             sendForeignKart();
          }
       }
-      else if (responseParts[0].equals("own_kart_update")) {
+
+      if (responseParts[0].equals("own_kart_update")) {
             receiveKart();
             sendForeignKart();
       }

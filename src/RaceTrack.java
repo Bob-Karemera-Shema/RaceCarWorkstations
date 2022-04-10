@@ -41,6 +41,9 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
     {
         if(animationTimer.isRunning())                  //Only refreshes kart locations if timer is running
         {
+            ownKart = Client.getOwnKart();
+            foreignKart = Client.getForeignKart();
+
         super.paintComponent(g);
 
         //Draw racetrack
@@ -63,7 +66,6 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         //Draw karts
         ownKart.getCurrentImage().paintIcon(this, g, ownKart.getLocation().x, ownKart.getLocation().y);
 
-        foreignKart = Client.getForeignKart();
         if (foreignKart != null)
         {
             foreignKart.getCurrentImage().paintIcon(this, g, foreignKart.getLocation().x,
