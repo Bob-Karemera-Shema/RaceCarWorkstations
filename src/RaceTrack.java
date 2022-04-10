@@ -22,14 +22,16 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         setFocusable(true);
         this.parent = parent;
         ownKart = Client.getOwnKart();
-        ownKart.initialPosition(425, 500);                 //initialise own kart the position
+
+        if(ownKart.getKartColor().equals("Red")) {
+            ownKart.initialPosition(425, 500);                 //initialise own kart the position
+        }
+        else{
+            ownKart.initialPosition(425, 550);                 //initialise own kart the position
+        }
         ownKart.populateImageArray();                                        //load kart 1 images
 
-        foreignKart = Client.getForeignKart();
-        if (foreignKart != null) {
-            foreignKart.initialPosition(425, 600);                         //initialise the position of the second kart object
-            foreignKart.populateImageArray();                                    //load kart 2 images
-        }
+        foreignKart = Client.getForeignKart();                      //try to get foreign kart if available
         this.addKeyListener(this);
 
         StartAnimation();
@@ -61,6 +63,7 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         //Draw karts
         ownKart.getCurrentImage().paintIcon(this, g, ownKart.getLocation().x, ownKart.getLocation().y);
 
+        foreignKart = Client.getForeignKart();
         if (foreignKart != null)
         {
             foreignKart.getCurrentImage().paintIcon(this, g, foreignKart.getLocation().x,

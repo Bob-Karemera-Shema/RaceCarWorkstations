@@ -178,7 +178,9 @@ public class Client
       {
          foreignKart = (Kart) objectInput.readObject();
       } catch (Exception e) 
-      {}
+      {
+          System.out.println("Can't get foreign kart");
+      }
    }
 
    private static void deleteForeignKart()

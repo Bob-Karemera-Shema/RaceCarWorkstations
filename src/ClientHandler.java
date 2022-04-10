@@ -202,7 +202,7 @@ class ClientHandler implements Runnable
             inputKart = new Kart("Blue");
             kartBlue = inputKart;
             break;
-      }
+      };
    }
 
    private boolean checkKartAvailability(String color)
@@ -239,25 +239,21 @@ class ClientHandler implements Runnable
       // "kart_update" => [ "kart_update" ]
       String[] responseParts = response.split(" ");
       
-      switch (responseParts[0]) 
-      {
-         case "identify":
-            if(checkKartAvailability(responseParts[1])) {
-               kartType = responseParts[1];
-               receiveKart();
-            }
-            else
-            {
-               assignAvailableKart(responseParts[1]);
-            }
-            break;
-            
-         case "own_kart_update":
-            
+      if(responseParts[0].equals("identify")) {
+         if (checkKartAvailability(responseParts[1])) {
+            kartType = responseParts[1];
             receiveKart();
             sendForeignKart();
-
-            break;
+         }
+         else {
+            assignAvailableKart(responseParts[1]);
+            sendOwnKart();
+            sendForeignKart();
+         }
+      }
+      else if (responseParts[0].equals("own_kart_update")) {
+            receiveKart();
+            sendForeignKart();
       }
    }
 }
