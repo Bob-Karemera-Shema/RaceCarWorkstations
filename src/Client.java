@@ -210,11 +210,6 @@ public class Client
     {
         sendMessage(message);
         sendKart();
-        receiveForeignKart();
-
-        JOptionPane.showMessageDialog(window, "Your kart crashed!" +
-                " Player 2 wins the race", "Collision Detected", JOptionPane.ERROR_MESSAGE);
-
         shutdownClient();
     }
 
@@ -224,7 +219,7 @@ public class Client
         int response = JOptionPane.showConfirmDialog(window, "Player 2 kart Crashed!. " +
                    "Would you like to continue racing?","Collision Detected", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
-       if(response == JOptionPane.YES_NO_OPTION)
+       if(response == JOptionPane.NO_OPTION)
        {  shutdownClient();  }
        else {  deleteForeignKart(); }
    }
@@ -258,7 +253,7 @@ public class Client
    
    private static void shutdownClient() 
    {
-       window.windowClosed(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+       window.ParentCloseMe();
        sendMessage("CLOSE");
    }
 }

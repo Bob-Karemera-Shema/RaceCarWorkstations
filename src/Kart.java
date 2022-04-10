@@ -62,6 +62,12 @@ public class Kart implements Serializable{
         return kartImages[imageIndex];
     }
 
+    public String getKartColor()
+    {
+        //return current kart image
+        return kartColor;
+    }
+
     public void displaceKart()
     {
         //displace kart image
@@ -193,44 +199,46 @@ public class Kart implements Serializable{
 
     public void setLocationY(int newY) { location.y = newY; }           //set kart Y coordinate to new coordinate
 
-    public void checkOuterCollision()                    //check whether kart collides with outer bound
+    public boolean checkOuterCollision()                    //check whether kart collides with outer bound
     {
         //( 50, 100, 750, 500 ) outer edge
-        if(getLocation().x < 50)
+        if(getLocation().x + 10 < 50)
         {
             setLocationX(50);
             stopKart();
-            Client.sendCollisionDetected("collision_with_track_edge");
+            return true;
         }
 
         if(getLocation().x > 750)
         {
             setLocationX(750);
             stopKart();
-            Client.sendCollisionDetected("collision_with_track_edge");
+            return true;
         }
 
-        if(getLocation().y < 100)
+        if(getLocation().y + 10 < 100)
         {
             setLocationY(100);
             stopKart();
-            Client.sendCollisionDetected("collision_with_track_edge");
+            return true;
         }
 
         if(getLocation().y > 550)
         {
             setLocationY(550);
             stopKart();
-            Client.sendCollisionDetected("collision_with_track_edge");
+            return true;
         }
+        return false;
     }
 
-    public void checkInnerCollision(Rectangle innerBound)
+    public boolean checkInnerCollision(Rectangle innerBound)
     {
         if(getBounds().intersects(innerBound))
         {
             stopKart();
-            Client.sendCollisionDetected("collision_with_grass");
+            return true;
         }
+        return false;
     }
 }

@@ -60,6 +60,7 @@ class ClientHandler implements Runnable
             
             if ( line.equals("CLOSE") )
             {
+               sendMessage("CLOSE");
                break;
             }
             

@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-public class Frame extends JFrame implements WindowListener
+public class Frame extends JFrame
 {
     public Frame()
     {
@@ -16,41 +16,14 @@ public class Frame extends JFrame implements WindowListener
         Container container = getContentPane();
 
         //Create a racetrack instance
-        container.add(new RaceTrack());
+        container.add(new RaceTrack(this));
     }
 
-    @Override
-    public void windowOpened(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowClosing(WindowEvent e) {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
-
-    @Override
-    public void windowClosed(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowIconified(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowDeiconified(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowActivated(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowDeactivated(WindowEvent e) {
-
+    public void ParentCloseMe(){
+        //method to close the frame
+        // Hide the frame
+        setVisible(false);
+        // If the frame is no longer needed, call dispose
+        dispose();
     }
 }

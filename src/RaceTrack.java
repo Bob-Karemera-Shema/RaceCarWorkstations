@@ -12,15 +12,17 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
     private Timer animationTimer;                       //Timer tool for animation
     private Kart ownKart = null;
     private Kart foreignKart = null;
+    private Frame parent;                               //Frame containing panel
 
-    public RaceTrack()
+    public RaceTrack(Frame parent)
     {
         setLayout(null);                                //suppress default panel layout features
         setBounds(0,0,850,650);
         setBackground(Color.green);
         setFocusable(true);
+        this.parent = parent;
         ownKart = Client.getOwnKart();
-        Client.getOwnKart().initialPosition(425, 500);                 //initialise own kart the position
+        ownKart.initialPosition(425, 500);                 //initialise own kart the position
         ownKart.populateImageArray();                                        //load kart 1 images
 
         foreignKart = Client.getForeignKart();
@@ -35,6 +37,8 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
 
     public void paintComponent(Graphics g)              //Draw racetrack and current kart locations
     {
+        if(animationTimer.isRunning())                  //Only refreshes kart locations if timer is running
+        {
         super.paintComponent(g);
 
         //Draw racetrack
@@ -62,9 +66,6 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
             foreignKart.getCurrentImage().paintIcon(this, g, foreignKart.getLocation().x,
                     foreignKart.getLocation().y);
         }
-
-        if(animationTimer.isRunning())                  //Only refreshes kart locations if timer is running
-        {
             ownKart.displaceKart();
             Client.setOwnKart(ownKart);
             Client.sendOwnKart();
@@ -125,7 +126,14 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
 
     public void collisionDetection()                //collision detection method
     {
-        if (foreignKart != null) {
+        collisionBetweenKarts();
+        collisionWithBoundaries();
+    }
+
+    public void collisionBetweenKarts()
+    {
+        if (foreignKart != null)
+        {
             //Collision detection between karts
             if ((foreignKart.getLocation().y >= ownKart.getLocation().y && foreignKart.getLocation().y <= ownKart.getLocation().y + 40)
                     || (foreignKart.getLocation().y + 40 >= ownKart.getLocation().y &&
@@ -137,16 +145,37 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                     ownKart.stopKart();
                     foreignKart.stopKart();
                     Client.sendCollisionDetected("collision_with_foreign_kart");
+                    StopAnimation();
+                    JOptionPane.showMessageDialog(this, "Karts crashed into each other!" +
+                            " No winner for this race", "Collision Detected", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
-        //Collision detection between karts and racetrack bounds
-        ownKart.checkOuterCollision();
-        ownKart.checkInnerCollision(new Rectangle( 150, 200, 550, 300 ));     //inner edge bounds
+    }
 
-        if (foreignKart != null) {
-            foreignKart.checkOuterCollision();
-            foreignKart.checkInnerCollision(new Rectangle(150, 200, 550, 300));    //inner edge bounds
+    public void collisionWithBoundaries()
+    {
+        //Collision detection between karts and racetrack bounds
+        if(ownKart.checkOuterCollision())
+        {
+            StopAnimation();
+            JOptionPane.showMessageDialog(this, "Kart" + ownKart.getKartColor() + " crashed!" +
+                    " KartBlue wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
+            endGame();
         }
+
+        if(ownKart.checkInnerCollision(new Rectangle( 150, 200, 550, 300 )))     //inner edge bounds
+        {
+            StopAnimation();
+            JOptionPane.showMessageDialog(this, "Kart" + ownKart.getKartColor() + " crashed!" +
+                    " KartBlue wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
+            endGame();
+        }
+    }
+
+    public void endGame()
+    {
+        //Close Frame containing panel
+        parent.ParentCloseMe();
     }
 }
