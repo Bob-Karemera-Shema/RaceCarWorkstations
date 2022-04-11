@@ -136,7 +136,19 @@ class ClientHandler implements Runnable
 
    private void sendForeignKart()
    {
-      sendMessage("foreign_kart_update");
+      //method sends foreign kart update and collision detection updates
+      if(!kartBlue.isAlive()  && !kartRed.isAlive()) {
+         sendMessage("collision_with_foreign_kart");
+      }
+      if(kartBlue.isAlive()  && kartRed.isAlive()) {
+         sendMessage("foreign_kart_update");
+      }
+      if(!kartBlue.getKartColor().equals(kartType)  && !kartBlue.isAlive()) {
+         sendMessage("collision_with_" + kartBlue.getCollisionArea());
+      }
+      if(!kartRed.getKartColor().equals(kartType)  && !kartRed.isAlive()) {
+         sendMessage("collision_with_" + kartBlue.getCollisionArea());
+      }
 
       switch (kartType)
       {
@@ -187,13 +199,19 @@ class ClientHandler implements Runnable
       switch (color)
       {
          case "Blue":
+            kartType = color;
             inputKart = new Kart("Red");
             kartRed = inputKart;
+            kartRed.initialPosition(425, 500);                 //New assigned Kart initial position
+            kartRed.populateImageArray();                            //load kart image
             break;
 
          case "Red":
+            kartType = color;
             inputKart = new Kart("Blue");
             kartBlue = inputKart;
+            kartBlue.initialPosition(425, 550);                 //New assigned Kart initial position
+            kartBlue.populateImageArray();                            //load kart image
             break;
       };
    }
@@ -222,6 +240,24 @@ class ClientHandler implements Runnable
             return false;
          }
       }
+   }
+
+   public void kartCollision()
+   {
+      switch (kartType)
+      {
+         case "Blue":
+            kartBlue.setAlive(false);
+            break;
+         case "Red":
+            kartRed.setAlive(false);
+      }
+   }
+
+   public void kartsCrash()
+   {
+      kartBlue.setAlive(false);
+      kartRed.setAlive(false);
    }
    
    private void handleClientResponse(String response)
@@ -255,6 +291,19 @@ class ClientHandler implements Runnable
       else if (responseParts[0].equals("own_kart_update")) {
             receiveKart();
             sendForeignKart();
+      }
+
+      else if (responseParts[0].equals("collision_with_track_edge")) {
+         kartCollision();
+      }
+
+      else if (responseParts[0].equals("collision_with_grass")) {
+         kartCollision();
+      }
+
+      else if (responseParts[0].equals("collision_with_foreign_kart")) {
+         receiveKart();
+         sendForeignKart();
       }
    }
 }

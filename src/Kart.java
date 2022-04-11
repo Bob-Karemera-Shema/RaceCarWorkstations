@@ -10,6 +10,8 @@ public class Kart implements Serializable{
     private ImageIcon[] kartImages;                     //kart 2 image array
     private String kartColor;                           //kart color attribute
     private final int totalImages = 16;                 //number of images
+    private boolean alive;
+    private String collisionArea;
 
     public Kart(String kartColor)
     {
@@ -17,6 +19,7 @@ public class Kart implements Serializable{
         direction = 0;                                  //initial kart direction
         this.kartColor = kartColor;                     //Assign kart color
         kartImages = new ImageIcon[totalImages];       //initialise image array
+        alive = true;                                   //kart is alive
     }
 
     public void initialPosition(int x, int y)
@@ -51,6 +54,7 @@ public class Kart implements Serializable{
         }
         catch (Exception e)
         {
+            //notify player kart images were not found
             JOptionPane.showMessageDialog(null, message,
                     "Loading error",JOptionPane.ERROR_MESSAGE); //inform user
         }
@@ -66,6 +70,18 @@ public class Kart implements Serializable{
     {
         //return current kart image
         return kartColor;
+    }
+
+    public boolean isAlive()
+    {
+        //return whether kart is alive or not
+        return alive;
+    }
+
+    public String getCollisionArea()
+    {
+        //return area of collision
+        return collisionArea;
     }
 
     public void displaceKart()
@@ -151,6 +167,7 @@ public class Kart implements Serializable{
 
     public void updateDirection(String newDirection)
     {
+        //updates the direction of the kart while it moves
         if(newDirection.equals("left"))
         {
             direction--;
@@ -199,6 +216,10 @@ public class Kart implements Serializable{
 
     public void setLocationY(int newY) { location.y = newY; }           //set kart Y coordinate to new coordinate
 
+    public void setAlive(boolean newLife) { alive = newLife;}           //set new kart alive status
+
+    public void setCollisionArea(String area) { collisionArea = area;}           //set kart collision area
+
     public boolean checkOuterCollision()                    //check whether kart collides with outer bound
     {
         //( 50, 100, 750, 500 ) outer edge
@@ -234,6 +255,7 @@ public class Kart implements Serializable{
 
     public boolean checkInnerCollision(Rectangle innerBound)
     {
+        //method to check collision with grass
         if(getBounds().intersects(innerBound))
         {
             stopKart();

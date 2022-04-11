@@ -149,6 +149,8 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         //Collision detection between karts and racetrack bounds
         if(Client.getOwnKart().checkOuterCollision())
         {
+            Client.getOwnKart().setCollisionArea("track_edge");
+            Client.sendCollisionDetected("collision_with_track_edge");
             StopAnimation();
             JOptionPane.showMessageDialog(this, "Kart" + Client.getOwnKart().getKartColor() + " crashed!" +
                     " KartBlue wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
@@ -157,6 +159,8 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
 
         if(Client.getOwnKart().checkInnerCollision(new Rectangle( 150, 200, 550, 300 )))     //inner edge bounds
         {
+            Client.getOwnKart().setCollisionArea("track_edge");
+            Client.sendCollisionDetected("collision_with_grass");
             StopAnimation();
             JOptionPane.showMessageDialog(this, "Kart" + Client.getOwnKart().getKartColor() + " crashed!" +
                     " KartBlue wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);

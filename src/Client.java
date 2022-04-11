@@ -21,10 +21,12 @@ public class Client
 	// replace "localhost" with the remote server address, if needed
 	// 5000 is the server port
 	private static String serverHost = "localhost";
-   
+
+    //Declare kart objects for the client
    private static Kart ownKart = null;
    private static Kart foreignKart = null;
 
+   //Declare frame window to display game
    private static Frame window = null;
 
    // "blue" / "red"
@@ -87,9 +89,9 @@ public class Client
         {
 			try
 			{
-            initialise();
-            window = new Frame();
-            window.setVisible(true);
+            initialise();           //initialise kart of choice
+            window = new Frame();   //initialise frame object
+            window.setVisible(true);//make window visible
 
             do 
             {
@@ -144,17 +146,18 @@ public class Client
    public static Kart getOwnKart()
     {
         return ownKart;
-    }
+    }               //return ownKart
 
-    public static void setOwnKart(Kart updateKart) { ownKart = updateKart; }
+    public static void setOwnKart(Kart updateKart) { ownKart = updateKart; }        //update ownKart
 
     public static Kart getForeignKart()
     {
         return foreignKart;
-    }
+    }       //return foreignKart
 
    private static void sendKart() 
    {
+       //serializes kart objects and sends them to the server
       try 
       {
          objectOutput.writeObject( ownKart );
@@ -167,12 +170,14 @@ public class Client
    
    public static void sendOwnKart()
    {
+       //method to send own kart updates to server
       sendMessage("own_kart_update");
       sendKart();
    }
 
     private static void receiveOwnKart()
     {
+        //deserializes ownKart object received from the server
         try
         {
             ownKart = (Kart) objectInput.readObject();
@@ -182,6 +187,7 @@ public class Client
 
    private static void receiveForeignKart() 
    {
+       //deserializes foreignKart object received from the server
       try 
       {
          foreignKart = (Kart) objectInput.readObject();
@@ -192,11 +198,13 @@ public class Client
 
    private static void deleteForeignKart()
    {
+       //delete foreignKart when collision is detected
        foreignKart = null;
    }
    
    private static String receiveMessage() 
    {
+       //receive message from server
       try 
       {
          return inputStream.readLine();
@@ -208,6 +216,7 @@ public class Client
    
    private static void sendMessage(String message) 
    {
+       //send message to server
       try 
       {
          outputStream.writeBytes(message + "\n");
@@ -217,24 +226,37 @@ public class Client
 
    public static void sendCollisionDetected(String message)
     {
+        //send detected collision to server
         sendMessage(message);
         sendKart();
         shutdownClient();
     }
 
-   private static void foreignKartCollisionTrackEdge(String collisionArea)
-   {
-        //inform client foreign kart has collided with track edge.
-        int response = JOptionPane.showConfirmDialog(window, "Player 2 kart Crashed!. " +
-                   "Would you like to continue racing?","Collision Detected", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+    private static void foreignKartCollision(String collisionArea)
+    {
+        //inform client foreign kart has collided with track edge or grass.
+        int response = JOptionPane.showConfirmDialog(window, "kart" + foreignKart.getKartColor() + " crashed into "+ collisionArea
+                + "! " + "You won\n .Would you like to continue driving around?","Collision Detected", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
-       if(response == JOptionPane.NO_OPTION)
-       {  shutdownClient();  }
-       else {  deleteForeignKart(); }
-   }
+        if(response == JOptionPane.NO_OPTION)
+        {  shutdownClient();  }
+        else {  deleteForeignKart(); }
+    }
+
+    private static void kartsCollision()
+    {
+        //inform client foreign kart has collided with own kart.
+        int response = JOptionPane.showConfirmDialog(window, "kart" + foreignKart.getKartColor() + " crashed into you! You won\n"
+                + "Would you like to continue driving around?","Collision Detected", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+        if(response == JOptionPane.NO_OPTION)
+        {  shutdownClient();  }
+        else {  deleteForeignKart(); }
+    }
    
    private static void handleServerResponse(String response) 
    {
+       //handle server response accordingly
       switch (response) 
       {
           case "pong":
@@ -258,18 +280,23 @@ public class Client
             break;
 
           case "collision_with_track_edge":
-              foreignKartCollisionTrackEdge("track");
+              foreignKartCollision("track");
+              receiveForeignKart();
               break;
           case "collision_with_foreign_kart":
+              kartsCollision();
+              receiveForeignKart();
               break;
           case "collision_with_grass":
-              foreignKartCollisionTrackEdge("grass");
+              foreignKartCollision("grass");
+              receiveForeignKart();
               break;
       }
    }
    
    private static void shutdownClient() 
    {
+       //method closes the window and end the program
        window.ParentCloseMe();
        sendMessage("CLOSE");
    }
