@@ -51,7 +51,7 @@ public class Kart implements Serializable{
         }
         catch (Exception e)
         {
-            JOptionPane.showMessageDialog(null,"Images not found",
+            JOptionPane.showMessageDialog(null, message,
                     "Loading error",JOptionPane.ERROR_MESSAGE); //inform user
         }
     }

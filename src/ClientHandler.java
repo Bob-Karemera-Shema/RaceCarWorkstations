@@ -114,47 +114,40 @@ class ClientHandler implements Runnable
          objectOutput.writeObject(kartToSend);
          objectOutput.flush();
       } catch (Exception e) 
-      {}
+      {
+         System.out.println("Can't send kart");}
    }
 
    private void sendOwnKart()
    {
-      Kart kartToSend = null;
-
       sendMessage("own_kart_update");
 
       switch (kartType)
       {
          case "blue":
-            kartToSend = kartBlue;
+            sendKart(kartBlue);
             break;
 
          case "red":
-            kartToSend = kartRed;
+            sendKart(kartRed);
             break;
       }
-
-      sendKart(kartToSend);
    }
 
    private void sendForeignKart()
    {
-      Kart kartToSend = null;
-
       sendMessage("foreign_kart_update");
 
       switch (kartType)
       {
          case "Blue":
-            kartToSend = kartRed;
+            sendKart(kartRed);
             break;
 
          case "Red":
-            kartToSend = kartBlue;
+            sendKart(kartBlue);
             break;
       }
-
-      sendKart(kartToSend);
    }
    
    private void receiveKart()
@@ -248,20 +241,18 @@ class ClientHandler implements Runnable
          sendMessage("pong");
       }
 
-      if(responseParts[0].equals("identify")) {
+      else if(responseParts[0].equals("identify")) {
          if (checkKartAvailability(responseParts[1])) {
             kartType = responseParts[1];
             receiveKart();
-            sendForeignKart();
          }
          else {
             assignAvailableKart(responseParts[1]);
             sendOwnKart();
-            sendForeignKart();
          }
       }
 
-      if (responseParts[0].equals("own_kart_update")) {
+      else if (responseParts[0].equals("own_kart_update")) {
             receiveKart();
             sendForeignKart();
       }

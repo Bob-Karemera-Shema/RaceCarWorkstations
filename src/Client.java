@@ -1,8 +1,7 @@
-import java.awt.event.WindowEvent;
-import java.io.*;
-import java.net.*;
-import java.util.*;
 import javax.swing.*;
+import java.io.*;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class Client
 {
@@ -130,6 +129,14 @@ public class Client
    {
       // initialise our client's own kart object
       ownKart = new Kart( kartType );
+
+       if(ownKart.getKartColor().equals("Red")) {
+           ownKart.initialPosition(425, 500);                 //ownKart initial position
+       }
+       else{
+           ownKart.initialPosition(425, 550);                 //ownKart initial position
+       }
+       ownKart.populateImageArray();                                //load kart 1 images
       sendMessage("identify " + kartType);
       sendKart();
    }
@@ -153,14 +160,15 @@ public class Client
          objectOutput.writeObject( ownKart );
          objectOutput.flush();
       } catch (Exception e)
-      {}
+      {
+          e.printStackTrace();
+      }
    }
    
    public static void sendOwnKart()
    {
       sendMessage("own_kart_update");
       sendKart();
-      receiveForeignKart();
    }
 
     private static void receiveOwnKart()
