@@ -277,7 +277,7 @@ class ClientHandler implements Runnable
          sendMessage("pong");
       }
 
-      else if(responseParts[0].equals("identify")) {
+      if(responseParts[0].equals("identify")) {
          if (checkKartAvailability(responseParts[1])) {
             kartType = responseParts[1];
             receiveKart();
@@ -288,20 +288,22 @@ class ClientHandler implements Runnable
          }
       }
 
-      else if (responseParts[0].equals("own_kart_update")) {
+      if (responseParts[0].equals("own_kart_update")) {
             receiveKart();
             sendForeignKart();
       }
 
-      else if (responseParts[0].equals("collision_with_track_edge")) {
+      if (responseParts[0].equals("collision_with_track_edge")) {
          kartCollision();
+         sendForeignKart();
       }
 
-      else if (responseParts[0].equals("collision_with_grass")) {
+      if (responseParts[0].equals("collision_with_grass")) {
          kartCollision();
+         sendForeignKart();
       }
 
-      else if (responseParts[0].equals("collision_with_foreign_kart")) {
+      if (responseParts[0].equals("collision_with_foreign_kart")) {
          receiveKart();
          sendForeignKart();
       }
