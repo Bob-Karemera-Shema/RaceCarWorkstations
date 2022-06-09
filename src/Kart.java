@@ -198,10 +198,51 @@ public class Kart implements Serializable{
         speed -= 1;
     }
 
+    public void setImageIndex(int imageIndex) {
+        //set kart image index
+        this.imageIndex = imageIndex;
+    }
+
+    public void setDirection(int direction)
+    {
+        //set kart direction
+        this.direction = direction;
+    }
+
+    public int getDirection()
+    {
+        //return kart image index
+        return direction;
+    }
+
+    public void setSpeed(float speed)
+    {
+        //set kart direction
+        this.speed = speed;
+    }
+
+    public float getSpeed()
+    {
+        //return kart image index
+        return speed;
+    }
+
     public Point getLocation()
     {
         return location;
-    }       //return current kart location
+    }       //return kart location
+
+    public int getLocationX()
+    {
+        //return x-coordinate of kart location
+        return location.x;
+    }
+
+    public int getLocationY()
+    {
+        //return y-coordinate of kart location
+        return location.y;
+    }
 
     public void stopKart()
     {

@@ -8,7 +8,7 @@ public class Client
    // Declare client socket
 	private static Socket clientSocket = null;
 
-	// Declare output stream and string to send to server 
+	// Declare output stream to send to server
 	private static DataOutputStream outputStream = null;
 			
 	// Declare input stream from server and string to store input received from server
@@ -99,14 +99,16 @@ public class Client
                
    				if(responseLine != null)
    				{
+
                   handleServerResponse(responseLine);
    				}
-               
-               if ( responseLine.equals("CLOSE") )
-               {
-                  shutdownClient();
-                  break;
-               }
+
+                if ( responseLine.equals("CLOSE") )
+                {
+                    shutdownClient();
+                    break;
+                }
+
             } while(true);
 								
 				// close the input/output streams and socket
@@ -139,16 +141,18 @@ public class Client
            ownKart.initialPosition(425, 550);                 //ownKart initial position
        }
        ownKart.populateImageArray();                                //load kart 1 images
-      sendMessage("identify " + kartType);
-      sendKart();
+      sendMessage("identify " + kartType + " " +
+              ownKart.getDirection() + " " +
+              ownKart.getLocationX() + " " +
+              ownKart.getLocationY() + " " +
+              ownKart.getSpeed()
+      );
    }
 
    public static Kart getOwnKart()
     {
         return ownKart;
     }               //return ownKart
-
-    public static void setOwnKart(Kart updateKart) { ownKart = updateKart; }        //update ownKart
 
     public static Kart getForeignKart()
     {
@@ -171,29 +175,54 @@ public class Client
    public static void sendOwnKart()
    {
        //method to send own kart updates to server
-      sendMessage("own_kart_update");
-      sendKart();
+      sendMessage("own_kart_update " +
+              ownKart.getDirection() + " " +
+              ownKart.getLocationX() + " " +
+              ownKart.getLocationY() + " " +
+              ownKart.getSpeed()
+      );
+
+      //sendKart();
    }
 
-    private static void receiveOwnKart()
+    private static void receiveOwnKart(String update)
     {
-        //deserializes ownKart object received from the server
-        try
-        {
-            ownKart = (Kart) objectInput.readObject();
-        } catch (Exception e)
-        {}
+        String[] updateParts = update.split(" ");
+
+        //update kart information received from the server
+        ownKart.setImageIndex(Integer.parseInt(updateParts[1]));
+        ownKart.setDirection(Integer.parseInt(updateParts[1]));
+        ownKart.setLocationX(Integer.parseInt(updateParts[2]));
+        ownKart.setLocationY(Integer.parseInt(updateParts[3]));
+        ownKart.setSpeed(Float.parseFloat(updateParts[4]));
     }
 
-   private static void receiveForeignKart() 
+   private static void receiveForeignKart(String update)
    {
-       //deserializes foreignKart object received from the server
-      try 
-      {
-         foreignKart = (Kart) objectInput.readObject();
-      } catch (Exception e) 
-      {
-      }
+       String[] updateParts = update.split(" ");
+
+       if(foreignKart == null) {
+           switch (kartType) {
+               case "Blue":
+                   foreignKart = new Kart("Red");
+                   foreignKart.initialPosition(425, 500);                 //foreignKart initial position
+                   foreignKart.populateImageArray();                                //load kart 1 images
+                   break;
+
+               case "Red":
+                   foreignKart = new Kart("Blue");
+                   foreignKart.initialPosition(425, 550);                 //foreignKart initial position
+                   foreignKart.populateImageArray();                                //load kart 1 images
+                   break;
+           }
+       }
+
+       //update kart information received from the server
+       foreignKart.setImageIndex(Integer.parseInt(updateParts[1]));
+       foreignKart.setDirection(Integer.parseInt(updateParts[1]));
+       foreignKart.setLocationX(Integer.parseInt(updateParts[2]));
+       foreignKart.setLocationY(Integer.parseInt(updateParts[3]));
+       foreignKart.setSpeed(Float.parseFloat(updateParts[4]));
    }
 
    private static void deleteForeignKart()
@@ -227,8 +256,12 @@ public class Client
    public static void sendCollisionDetected(String message)
     {
         //send detected collision to server
-        sendMessage(message);
-        sendKart();
+        sendMessage(message + " " +
+                        ownKart.getDirection() + " " +
+                        ownKart.getLocationX() + " " +
+                        ownKart.getLocationY() + " " +
+                        ownKart.getSpeed()
+                );
         shutdownClient();
     }
 
@@ -256,8 +289,9 @@ public class Client
    
    private static void handleServerResponse(String response) 
    {
+       String[] responseParts = response.split(" ");
        //handle server response accordingly
-      switch (response) 
+      switch (responseParts[0])
       {
           case "pong":
 
@@ -269,27 +303,27 @@ public class Client
 
           case "own_kart_update":
 
-              receiveOwnKart();
+              receiveOwnKart(response);
 
               break;
 
           case "foreign_kart_update":
-         
-            receiveForeignKart();
-            
+
+            receiveForeignKart(response);
+
             break;
 
           case "collision_with_track_edge":
               foreignKartCollision("track");
-              receiveForeignKart();
+              receiveForeignKart(response);
               break;
           case "collision_with_foreign_kart":
               kartsCollision();
-              receiveForeignKart();
+              receiveForeignKart(response);
               break;
           case "collision_with_grass":
               foreignKartCollision("grass");
-              receiveForeignKart();
+              receiveForeignKart(response);
               break;
       }
    }

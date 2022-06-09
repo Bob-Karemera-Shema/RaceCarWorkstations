@@ -120,16 +120,25 @@ class ClientHandler implements Runnable
 
    private void sendOwnKart()
    {
-      sendMessage("own_kart_update");
 
       switch (kartType)
       {
          case "blue":
-            sendKart(kartBlue);
+            sendMessage("own_kart_update " +
+                    kartBlue.getDirection() + " " +
+                    kartBlue.getLocationX() + " " +
+                    kartBlue.getLocationY() + " " +
+                    kartBlue.getSpeed()
+            );
             break;
 
          case "red":
-            sendKart(kartRed);
+            sendMessage("own_kart_update " +
+                    kartRed.getDirection() + " " +
+                    kartRed.getLocationX() + " " +
+                    kartRed.getLocationY() + " " +
+                    kartRed.getSpeed()
+            );
             break;
       }
    }
@@ -138,10 +147,7 @@ class ClientHandler implements Runnable
    {
       //method sends foreign kart update and collision detection updates
       if(!kartBlue.isAlive()  && !kartRed.isAlive()) {
-         sendMessage("collision_with_foreign_kart");
-      }
-      if(kartBlue.isAlive()  && kartRed.isAlive()) {
-         sendMessage("foreign_kart_update");
+         sendMessage("collision_with_foreign_kart ");
       }
       if(!kartBlue.getKartColor().equals(kartType)  && !kartBlue.isAlive()) {
          sendMessage("collision_with_" + kartBlue.getCollisionArea());
@@ -153,33 +159,46 @@ class ClientHandler implements Runnable
       switch (kartType)
       {
          case "Blue":
-            sendKart(kartRed);
+            sendMessage("foreign_kart_update " +
+                    kartRed.getDirection() + " " +
+                    kartRed.getLocationX() + " " +
+                    kartRed.getLocationY() + " " +
+                    kartRed.getSpeed()
+            );
             break;
 
          case "Red":
-            sendKart(kartBlue);
+            sendMessage("foreign_kart_update " +
+                    kartBlue.getDirection() + " " +
+                    kartBlue.getLocationX() + " " +
+                    kartBlue.getLocationY() + " " +
+                    kartBlue.getSpeed()
+            );
             break;
       }
    }
    
-   private void receiveKart()
+   private void receiveKart(String update)
    {
-      Kart inputKart = null;
-      
-      try 
-      {
-         inputKart = (Kart) objectInput.readObject();
-      } catch (Exception e) 
-      {}
-      
+      String[] updateParts = update.split(" ");
+
+      //update kart information received from the client
       switch (kartType) 
       {
          case "Blue":
-            kartBlue = inputKart;
+            kartBlue.setImageIndex(Integer.parseInt(updateParts[1]));
+            kartBlue.setDirection(Integer.parseInt(updateParts[1]));
+            kartBlue.setLocationX(Integer.parseInt(updateParts[2]));
+            kartBlue.setLocationY(Integer.parseInt(updateParts[3]));
+            kartBlue.setSpeed(Float.parseFloat(updateParts[4]));
             break;
             
          case "Red":
-            kartRed = inputKart;
+            kartRed.setImageIndex(Integer.parseInt(updateParts[1]));
+            kartRed.setDirection(Integer.parseInt(updateParts[1]));
+            kartRed.setLocationX(Integer.parseInt(updateParts[2]));
+            kartRed.setLocationY(Integer.parseInt(updateParts[3]));
+            kartRed.setSpeed(Float.parseFloat(updateParts[4]));
             break;
       }
    }
@@ -189,12 +208,6 @@ class ClientHandler implements Runnable
       //If desired kart is already taken,
       //assign another kart of different color
       Kart inputKart = null;
-
-      try
-      {
-         inputKart = (Kart) objectInput.readObject();
-      } catch (Exception e)
-      {}
 
       switch (color)
       {
@@ -222,6 +235,9 @@ class ClientHandler implements Runnable
       {
          if (kartBlue == null)
          {
+            kartBlue = new Kart("Blue");
+            kartBlue.initialPosition(425, 550);                 //Kart initial position
+            kartBlue.populateImageArray();                            //load kart image
             return true;
          }
          else
@@ -233,6 +249,9 @@ class ClientHandler implements Runnable
       {
          if(kartRed == null)
          {
+            kartRed = new Kart("Red");
+            kartRed.initialPosition(425, 500);                 //Kart initial position
+            kartRed.populateImageArray();                            //load kart image
             return true;
          }
          else
@@ -252,12 +271,6 @@ class ClientHandler implements Runnable
          case "Red":
             kartRed.setAlive(false);
       }
-   }
-
-   public void kartsCrash()
-   {
-      kartBlue.setAlive(false);
-      kartRed.setAlive(false);
    }
    
    private void handleClientResponse(String response)
@@ -280,7 +293,6 @@ class ClientHandler implements Runnable
       if(responseParts[0].equals("identify")) {
          if (checkKartAvailability(responseParts[1])) {
             kartType = responseParts[1];
-            receiveKart();
          }
          else {
             assignAvailableKart(responseParts[1]);
@@ -289,22 +301,41 @@ class ClientHandler implements Runnable
       }
 
       if (responseParts[0].equals("own_kart_update")) {
-            receiveKart();
-            sendForeignKart();
+            receiveKart(response);
+
+            switch (kartType){
+               case "Blue":
+
+                  if(kartRed != null) {
+                     sendForeignKart();
+                  }
+
+                  break;
+
+               case "Red":
+
+                  if(kartBlue != null) {
+                     sendForeignKart();
+                  }
+
+                  break;
+            }
       }
 
       if (responseParts[0].equals("collision_with_track_edge")) {
          kartCollision();
+         receiveKart(response);
          sendForeignKart();
       }
 
       if (responseParts[0].equals("collision_with_grass")) {
          kartCollision();
+         receiveKart(response);
          sendForeignKart();
       }
 
       if (responseParts[0].equals("collision_with_foreign_kart")) {
-         receiveKart();
+         receiveKart(response);
          sendForeignKart();
       }
    }
