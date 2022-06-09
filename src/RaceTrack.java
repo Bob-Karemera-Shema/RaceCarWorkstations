@@ -38,7 +38,7 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         Color c5 = Color.green;
         g.setColor( c5 );
         g.fillRect( 150, 200, 550, 300 ); // inner edge
-        Color c3 = Color.yellow;
+        Color c3 = Color.black;
         g.setColor( c3 );
         g.drawRect( 100, 150, 650, 400 ); // mid-lane marker
         Color c4 = Color.black;
@@ -139,6 +139,7 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                     StopAnimation();
                     JOptionPane.showMessageDialog(this, "Karts crashed into each other!" +
                             " No winner for this race", "Collision Detected", JOptionPane.ERROR_MESSAGE);
+                    endGame();
                 }
             }
         }
