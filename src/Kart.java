@@ -66,6 +66,11 @@ public class Kart implements Serializable{
         return kartImages[imageIndex];
     }
 
+    public void setKartColor(String color)
+    {
+        this.kartColor = color;
+    }
+
     public String getKartColor()
     {
         //return current kart image

@@ -75,13 +75,12 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
 
     public void actionPerformed(ActionEvent event)
     {
-        Client.sendOwnKart();       //send ownKart information to clientHandler everytime timer ticks
-
         //Call repaint function to update display
         repaint();
 
         Client.getOwnKart().displaceKart();         //update kart position
         collisionDetection();           // detect collisions (between karts and with edges)
+        Client.sendOwnKart();       //send ownKart information to clientHandler everytime timer ticks
     }
 
     @Override
@@ -135,11 +134,10 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                 {  //and if the karts collide horizontally
                     Client.getOwnKart().stopKart();
                     Client.getForeignKart().stopKart();
-                    Client.sendCollisionDetected("collision_with_foreign_kart");
-                    StopAnimation();
                     JOptionPane.showMessageDialog(this, "Karts crashed into each other!" +
                             " No winner for this race", "Collision Detected", JOptionPane.ERROR_MESSAGE);
-                    endGame();
+                    StopAnimation();
+                    Client.shutdownClient();
                 }
             }
         }
@@ -150,28 +148,43 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         //Collision detection between karts and racetrack bounds
         if(Client.getOwnKart().checkOuterCollision())
         {
+            Client.getOwnKart().stopKart();
             Client.getOwnKart().setCollisionArea("track_edge");
-            Client.sendCollisionDetected("collision_with_track_edge");
-            StopAnimation();
             JOptionPane.showMessageDialog(this, "Kart" + Client.getOwnKart().getKartColor() + " crashed!" +
-                    " KartBlue wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
-            endGame();
+                    " Kart "+ Client.getForeignKart().getKartColor() +" wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
+            StopAnimation();
+            Client.shutdownClient();
         }
 
         if(Client.getOwnKart().checkInnerCollision(new Rectangle( 150, 200, 550, 300 )))     //inner edge bounds
         {
-            Client.getOwnKart().setCollisionArea("track_edge");
-            Client.sendCollisionDetected("collision_with_grass");
-            StopAnimation();
+            Client.getOwnKart().stopKart();
+            Client.getOwnKart().setCollisionArea("grass");
             JOptionPane.showMessageDialog(this, "Kart" + Client.getOwnKart().getKartColor() + " crashed!" +
-                    " KartBlue wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
-            endGame();
+                    " Kart" + Client.getForeignKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
+            StopAnimation();
+            Client.shutdownClient();
         }
-    }
 
-    public void endGame()
-    {
-        //Close Frame containing panel
-        parent.ParentCloseMe();
+        if(Client.getForeignKart() != null)
+        {
+            if (Client.getForeignKart().checkOuterCollision()) {
+                Client.getForeignKart().setCollisionArea("track_edge");
+                JOptionPane.showMessageDialog(this, "Kart" + Client.getForeignKart().getKartColor() + " crashed!" +
+                        " Kart " + Client.getOwnKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
+                StopAnimation();
+                Client.shutdownClient();
+            }
+
+            if (Client.getForeignKart().checkInnerCollision(new Rectangle(150, 200, 550, 300)))     //inner edge bounds
+            {
+                Client.getForeignKart().setCollisionArea("grass");
+                JOptionPane.showMessageDialog(this, "Kart" + Client.getForeignKart().getKartColor() + " crashed!" +
+                        " Kart " + Client.getOwnKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
+
+                StopAnimation();
+                Client.shutdownClient();
+            }
+        }
     }
 }

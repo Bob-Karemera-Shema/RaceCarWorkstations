@@ -34,9 +34,9 @@ public class Client
 
 	public static void main(String[] args)
 	{
-      String errorMessage = "Kart designation need to be provided as either 'red' or 'blue'.";
+      String errorMessage = "Kart designation need to be provided as either 'Red' or 'Blue'.";
 
-      kartType = JOptionPane.showInputDialog(null, "Enter kart of your choice",
+      kartType = JOptionPane.showInputDialog(null, "Enter kart of your choice, Red or Blue",
               "Kart Choice",JOptionPane.INFORMATION_MESSAGE);
 
       if (!kartType.equals(null))
@@ -100,14 +100,14 @@ public class Client
    				if(responseLine != null)
    				{
 
+                    if ( responseLine.equals("CLOSE") )
+                    {
+                        shutdownClient();
+                        break;
+                    }
+
                   handleServerResponse(responseLine);
    				}
-
-                if ( responseLine.equals("CLOSE") )
-                {
-                    shutdownClient();
-                    break;
-                }
 
             } while(true);
 								
@@ -195,6 +195,8 @@ public class Client
         ownKart.setLocationX(Integer.parseInt(updateParts[2]));
         ownKart.setLocationY(Integer.parseInt(updateParts[3]));
         ownKart.setSpeed(Float.parseFloat(updateParts[4]));
+        ownKart.setKartColor(updateParts[5]);
+        ownKart.populateImageArray();
     }
 
    private static void receiveForeignKart(String update)
@@ -253,18 +255,6 @@ public class Client
       {}
    }
 
-   public static void sendCollisionDetected(String message)
-    {
-        //send detected collision to server
-        sendMessage(message + " " +
-                        ownKart.getDirection() + " " +
-                        ownKart.getLocationX() + " " +
-                        ownKart.getLocationY() + " " +
-                        ownKart.getSpeed()
-                );
-        shutdownClient();
-    }
-
     private static void foreignKartCollision(String collisionArea)
     {
         //inform client foreign kart has collided with track edge or grass.
@@ -312,26 +302,13 @@ public class Client
             receiveForeignKart(response);
 
             break;
-
-          case "collision_with_track_edge":
-              foreignKartCollision("track");
-              receiveForeignKart(response);
-              break;
-          case "collision_with_foreign_kart":
-              kartsCollision();
-              receiveForeignKart(response);
-              break;
-          case "collision_with_grass":
-              foreignKartCollision("grass");
-              receiveForeignKart(response);
-              break;
       }
    }
    
-   private static void shutdownClient() 
+   public static void shutdownClient()
    {
        //method closes the window and end the program
        window.ParentCloseMe();
-       sendMessage("CLOSE");
+       //sendMessage("CLOSE");
    }
 }
