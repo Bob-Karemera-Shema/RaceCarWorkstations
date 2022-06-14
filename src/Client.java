@@ -230,9 +230,10 @@ public class Client
        }
    }
 
-   public static void deleteForeignKart()
+   public static void deleteKarts()
    {
-       //delete foreignKart when collision is detected
+       //delete Karts when collision is detected
+       ownKart = null;
        foreignKart = null;
    }
    
@@ -257,28 +258,6 @@ public class Client
       } catch (Exception e) 
       {}
    }
-
-    private static void foreignKartCollision(String collisionArea)
-    {
-        //inform client foreign kart has collided with track edge or grass.
-        int response = JOptionPane.showConfirmDialog(window, "kart" + foreignKart.getKartColor() + " crashed into "+ collisionArea
-                + "! " + "You won\n .Would you like to continue driving around?","Collision Detected", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-
-        if(response == JOptionPane.NO_OPTION)
-        {  shutdownClient();  }
-        else {  deleteForeignKart(); }
-    }
-
-    private static void kartsCollision()
-    {
-        //inform client foreign kart has collided with own kart.
-        int response = JOptionPane.showConfirmDialog(window, "kart" + foreignKart.getKartColor() + " crashed into you! You won\n"
-                + "Would you like to continue driving around?","Collision Detected", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-
-        if(response == JOptionPane.NO_OPTION)
-        {  shutdownClient();  }
-        else {  deleteForeignKart(); }
-    }
    
    private static void handleServerResponse(String response) 
    {

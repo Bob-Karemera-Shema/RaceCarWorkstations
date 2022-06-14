@@ -62,6 +62,7 @@ class ClientHandler implements Runnable
             {
                sendMessage("CLOSE");
                endSession();
+               alive = false;
                break;
             }
             
@@ -79,8 +80,6 @@ class ClientHandler implements Runnable
       {
          System.out.println("TCPClientHandler Exception: " + e.getMessage());
       }
-      
-      alive = false;
    }
    
    public boolean isAlive() 
@@ -90,8 +89,6 @@ class ClientHandler implements Runnable
 
    public void endSession()
    {
-      alive = false;
-
       switch (kartType)
       {
          case "Blue":

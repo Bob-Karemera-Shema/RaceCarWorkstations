@@ -11,9 +11,11 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
     private final int animationDelay = 100;             //animation delay in milliseconds
     private Timer animationTimer;                       //Timer tool for animation
     private JLabel raceBoardTitle;                           //Race information title label
-    private JLabel raceBoard;                           //Race information label
+    private JLabel firstPlace;                           //Race information label
+    private JLabel secondPlace;                           //Race information label
     private JButton exitButton;                         //Exit button
     private JButton playAgain;                          //Play again button
+    private JLabel waiting;
     private JFrame parent;
 
     public RaceTrack(Frame parent)
@@ -23,14 +25,36 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         setBackground(Color.green);
         setFocusable(true);
         this.addKeyListener(this);                   //add key listener to this JPanel
-
         this.parent = parent;
+
         raceBoardTitle = new JLabel("Race Information");
-        raceBoard = new JLabel();
+        raceBoardTitle.setBounds(50,600,100,50);
+
+        firstPlace = new JLabel("1st:");
+        firstPlace.setBounds(50,650,100,50);
+
+        secondPlace = new JLabel("2nd:");
+        secondPlace.setBounds(50,700,100,50);
+
         exitButton = new JButton("Exit");
+        exitButton.setBounds(800,30,100,50);
+        exitButton.setBackground(Color.white);
         exitButton.addActionListener(this);
+
         playAgain = new JButton("Play Again");
+        playAgain.setBounds(700,30,100,50);
+        playAgain.setBackground(Color.white);
         playAgain.addActionListener(this);
+
+        waiting = new JLabel("Waiting for second player to connect...");
+        waiting.setBounds(320,300,300,100);
+
+        add(raceBoardTitle);
+        add(firstPlace);
+        add(secondPlace);
+        add(exitButton);
+        add(playAgain);
+
         StartAnimation();
     }
 
@@ -62,8 +86,13 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         }
         if (Client.getForeignKart() != null)        //Only draw foreign kart if it exists
          {
+             remove(waiting);
             Client.getForeignKart().getCurrentImage().paintIcon(this, g, Client.getForeignKart().getLocation().x,
                         Client.getForeignKart().getLocation().y);
+        }
+        if(Client.getForeignKart() == null)
+        {
+            add(waiting);
         }
     }
 
@@ -96,6 +125,7 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         }
         if(event.getSource() == exitButton)
         {
+            StopAnimation();
             Client.shutdownClient();
         }
         if(event.getSource() == playAgain)
@@ -160,8 +190,7 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                     //change kart alive status to false
                     Client.getOwnKart().setAlive(false);
                     Client.getForeignKart().setAlive(false);
-                    StopAnimation();
-                    Client.shutdownClient();
+                    Client.deleteKarts();
                 }
             }
         }
@@ -178,8 +207,6 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                     " Kart "+ Client.getForeignKart().getKartColor() +" wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
             //change kart alive status to false
             Client.getOwnKart().setAlive(false);
-            StopAnimation();
-            Client.shutdownClient();
         }
 
         if(Client.getOwnKart().checkInnerCollision(new Rectangle( 150, 200, 550, 300 )))     //inner edge bounds
@@ -190,8 +217,6 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                     " Kart" + Client.getForeignKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
             //change kart alive status to false
             Client.getOwnKart().setAlive(false);
-            StopAnimation();
-            Client.shutdownClient();
         }
 
         if(Client.getForeignKart() != null)
@@ -202,8 +227,6 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                         " Kart " + Client.getOwnKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
                 //change kart alive status to false
                 Client.getForeignKart().setAlive(false);
-                StopAnimation();
-                Client.shutdownClient();
             }
 
             if (Client.getForeignKart().checkInnerCollision(new Rectangle(150, 200, 550, 300)))     //inner edge bounds
@@ -213,8 +236,6 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                         " Kart " + Client.getOwnKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
                 //change kart alive status to false
                 Client.getForeignKart().setAlive(false);
-                StopAnimation();
-                Client.shutdownClient();
             }
         }
     }
