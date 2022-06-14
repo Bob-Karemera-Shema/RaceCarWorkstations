@@ -10,7 +10,11 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
 {
     private final int animationDelay = 100;             //animation delay in milliseconds
     private Timer animationTimer;                       //Timer tool for animation
-    private Frame parent;                               //Frame containing panel
+    private JLabel raceBoardTitle;                           //Race information title label
+    private JLabel raceBoard;                           //Race information label
+    private JButton exitButton;                         //Exit button
+    private JButton playAgain;                          //Play again button
+    private JFrame parent;
 
     public RaceTrack(Frame parent)
     {
@@ -18,9 +22,15 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         setBounds(0,0,850,650);
         setBackground(Color.green);
         setFocusable(true);
-        this.parent = parent;                           //initialise parent frame
         this.addKeyListener(this);                   //add key listener to this JPanel
 
+        this.parent = parent;
+        raceBoardTitle = new JLabel("Race Information");
+        raceBoard = new JLabel();
+        exitButton = new JButton("Exit");
+        exitButton.addActionListener(this);
+        playAgain = new JButton("Play Again");
+        playAgain.addActionListener(this);
         StartAnimation();
     }
 
@@ -75,12 +85,23 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
 
     public void actionPerformed(ActionEvent event)
     {
-        //Call repaint function to update display
-        repaint();
+        if(event.getSource() == animationTimer)
+        {
+            //Call repaint function to update display
+            repaint();
 
-        Client.getOwnKart().displaceKart();         //update kart position
-        collisionDetection();           // detect collisions (between karts and with edges)
-        Client.sendOwnKart();       //send ownKart information to clientHandler everytime timer ticks
+            Client.getOwnKart().displaceKart();         //update kart position
+            Client.sendOwnKart();       //send ownKart information to clientHandler everytime kart is displaced
+            collisionDetection();           // detect collisions (between karts and with edges)
+        }
+        if(event.getSource() == exitButton)
+        {
+            Client.shutdownClient();
+        }
+        if(event.getSource() == playAgain)
+        {
+
+        }
     }
 
     @Override
@@ -94,15 +115,15 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         {
             Client.getOwnKart().increaseSpeed();
         }
-        else if (e.getKeyCode() == KeyEvent.VK_DOWN)                //decrease kart1 speed if down key is pressed
+        if (e.getKeyCode() == KeyEvent.VK_DOWN)                //decrease kart1 speed if down key is pressed
         {
             Client.getOwnKart().decreaseSpeed();
         }
-        else if (e.getKeyCode() == KeyEvent.VK_LEFT)                //turn kart1 left if left key is pressed
+        if (e.getKeyCode() == KeyEvent.VK_LEFT)                //turn kart1 left if left key is pressed
         {
             Client.getOwnKart().updateDirection("left");
         }
-        else if (e.getKeyCode() == KeyEvent.VK_RIGHT)               //turn kart1 right if right key is pressed
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT)               //turn kart1 right if right key is pressed
         {
             Client.getOwnKart().updateDirection("right");
         }
@@ -136,6 +157,9 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                     Client.getForeignKart().stopKart();
                     JOptionPane.showMessageDialog(this, "Karts crashed into each other!" +
                             " No winner for this race", "Collision Detected", JOptionPane.ERROR_MESSAGE);
+                    //change kart alive status to false
+                    Client.getOwnKart().setAlive(false);
+                    Client.getForeignKart().setAlive(false);
                     StopAnimation();
                     Client.shutdownClient();
                 }
@@ -152,6 +176,8 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
             Client.getOwnKart().setCollisionArea("track_edge");
             JOptionPane.showMessageDialog(this, "Kart" + Client.getOwnKart().getKartColor() + " crashed!" +
                     " Kart "+ Client.getForeignKart().getKartColor() +" wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
+            //change kart alive status to false
+            Client.getOwnKart().setAlive(false);
             StopAnimation();
             Client.shutdownClient();
         }
@@ -162,6 +188,8 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
             Client.getOwnKart().setCollisionArea("grass");
             JOptionPane.showMessageDialog(this, "Kart" + Client.getOwnKart().getKartColor() + " crashed!" +
                     " Kart" + Client.getForeignKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
+            //change kart alive status to false
+            Client.getOwnKart().setAlive(false);
             StopAnimation();
             Client.shutdownClient();
         }
@@ -172,6 +200,8 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                 Client.getForeignKart().setCollisionArea("track_edge");
                 JOptionPane.showMessageDialog(this, "Kart" + Client.getForeignKart().getKartColor() + " crashed!" +
                         " Kart " + Client.getOwnKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
+                //change kart alive status to false
+                Client.getForeignKart().setAlive(false);
                 StopAnimation();
                 Client.shutdownClient();
             }
@@ -181,7 +211,8 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                 Client.getForeignKart().setCollisionArea("grass");
                 JOptionPane.showMessageDialog(this, "Kart" + Client.getForeignKart().getKartColor() + " crashed!" +
                         " Kart " + Client.getOwnKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
-
+                //change kart alive status to false
+                Client.getForeignKart().setAlive(false);
                 StopAnimation();
                 Client.shutdownClient();
             }

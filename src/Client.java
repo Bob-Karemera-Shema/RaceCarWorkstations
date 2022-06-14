@@ -219,15 +219,18 @@ public class Client
            }
        }
 
-       //update kart information received from the server
-       foreignKart.setImageIndex(Integer.parseInt(updateParts[1]));
-       foreignKart.setDirection(Integer.parseInt(updateParts[1]));
-       foreignKart.setLocationX(Integer.parseInt(updateParts[2]));
-       foreignKart.setLocationY(Integer.parseInt(updateParts[3]));
-       foreignKart.setSpeed(Float.parseFloat(updateParts[4]));
+       if(updateParts[1] != null)
+       {
+           //update kart information received from the server
+           foreignKart.setImageIndex(Integer.parseInt(updateParts[1]));
+           foreignKart.setDirection(Integer.parseInt(updateParts[1]));
+           foreignKart.setLocationX(Integer.parseInt(updateParts[2]));
+           foreignKart.setLocationY(Integer.parseInt(updateParts[3]));
+           foreignKart.setSpeed(Float.parseFloat(updateParts[4]));
+       }
    }
 
-   private static void deleteForeignKart()
+   public static void deleteForeignKart()
    {
        //delete foreignKart when collision is detected
        foreignKart = null;
@@ -309,6 +312,6 @@ public class Client
    {
        //method closes the window and end the program
        window.ParentCloseMe();
-       //sendMessage("CLOSE");
+       sendMessage("CLOSE");
    }
 }

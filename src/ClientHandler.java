@@ -269,18 +269,6 @@ class ClientHandler implements Runnable
          }
       }
    }
-
-   public void kartCollision()
-   {
-      switch (kartType)
-      {
-         case "Blue":
-            kartBlue = null;
-            break;
-         case "Red":
-            kartRed = null;
-      }
-   }
    
    private void handleClientResponse(String response)
    {
