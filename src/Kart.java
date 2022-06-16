@@ -12,7 +12,10 @@ public class Kart implements Serializable{
     private final int totalImages = 16;                 //number of images
     private boolean alive;
     private String collisionArea;
-
+    private int lapCounter;
+    private boolean threeQuaterWayMark;                 // helps ensure a kart has travelled three quarters of the track distance
+                                                        // before reaching the finish line in order to increment laps
+                                                        // done when the kart reaches the finish line
     public Kart(String kartColor)
     {
         speed = 0;                                      //kart starts at rest
@@ -20,6 +23,8 @@ public class Kart implements Serializable{
         this.kartColor = kartColor;                     //Assign kart color
         kartImages = new ImageIcon[totalImages];       //initialise image array
         alive = true;                                   //kart is alive
+        lapCounter = 1;
+        threeQuaterWayMark = false;
     }
 
     public void initialPosition(int x, int y)
@@ -269,30 +274,30 @@ public class Kart implements Serializable{
     public boolean checkOuterCollision()                    //check whether kart collides with outer bound
     {
         //( 50, 100, 750, 500 ) outer edge
-        if(getLocation().x + 10 < 50)
+        if(location.x + 10 < 50)
         {
-            setLocationX(50);
+            location.x = 50;
             stopKart();
             return true;
         }
 
-        if(getLocation().x > 750)
+        if(location.x > 750)
         {
-            setLocationX(750);
+            location.x = 750;
             stopKart();
             return true;
         }
 
-        if(getLocation().y + 10 < 100)
+        if(location.y + 10 < 100)
         {
-            setLocationY(100);
+            location.y = 100;
             stopKart();
             return true;
         }
 
-        if(getLocation().y > 550)
+        if(location.y > 550)
         {
-            setLocationY(550);
+            location.y = 550;
             stopKart();
             return true;
         }
@@ -308,5 +313,25 @@ public class Kart implements Serializable{
             return true;
         }
         return false;
+    }
+
+    public void updateLaps()
+    {
+        if(threeQuaterWayMark && location.x + 10 <= 425 && location.y > 400 &&
+                location.y < 700 && direction == 0)
+        {
+            threeQuaterWayMark = false;
+            lapCounter += 1;
+        }
+
+        if(location.x >= 650 && location.y >= 325 && location.y < 345)
+        {
+            threeQuaterWayMark = true;
+        }
+    }
+
+    public int getLapCounter()
+    {
+        return lapCounter;
     }
 }

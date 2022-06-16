@@ -55,16 +55,16 @@ class ClientHandler implements Runnable
          
    			if(line != null)
    			{
+               if ( line.equals("CLOSE") )
+               {
+                  sendMessage("CLOSE");
+                  endSession();
+                  alive = false;
+                  break;
+               }
+
    				handleClientResponse(line);
    			}
-            
-            if ( line.equals("CLOSE") )
-            {
-               sendMessage("CLOSE");
-               endSession();
-               alive = false;
-               break;
-            }
             
             try { Thread.sleep(1); } catch (InterruptedException e) {}
          } while(true);

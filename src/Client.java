@@ -90,9 +90,6 @@ public class Client
 			try
 			{
             initialise();           //initialise kart of choice
-            window = new Frame();   //initialise frame object
-            window.setVisible(true);//make window visible
-
             do 
             {
                responseLine = receiveMessage();
@@ -134,6 +131,10 @@ public class Client
       // initialise our client's own kart object
       ownKart = new Kart( kartType );
 
+       window = new Frame();   //initialise frame object
+       window.setVisible(true);//make window visible
+
+
        if(ownKart.getKartColor().equals("Red")) {
            ownKart.initialPosition(425, 500);                 //ownKart initial position
        }
@@ -158,19 +159,6 @@ public class Client
     {
         return foreignKart;
     }       //return foreignKart
-
-   private static void sendKart() 
-   {
-       //serializes kart objects and sends them to the server
-      try 
-      {
-         objectOutput.writeObject( ownKart );
-         objectOutput.flush();
-      } catch (Exception e)
-      {
-          e.printStackTrace();
-      }
-   }
    
    public static void sendOwnKart()
    {
@@ -293,4 +281,12 @@ public class Client
        window.ParentCloseMe();
        sendMessage("CLOSE");
    }
+
+    public static void playAgain()
+    {
+        deleteKarts();
+        sendMessage("play_again");
+        window.ParentCloseMe();
+        initialise();
+    }
 }

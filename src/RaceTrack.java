@@ -16,6 +16,7 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
     private JButton exitButton;                         //Exit button
     private JButton playAgain;                          //Play again button
     private JLabel waiting;
+    private JLabel laps;
     private JFrame parent;
 
     public RaceTrack(Frame parent)
@@ -36,6 +37,9 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         secondPlace = new JLabel("2nd:");
         secondPlace.setBounds(50,700,100,50);
 
+        laps = new JLabel("Laps:");
+        laps.setBounds(50,750,100,50);
+
         exitButton = new JButton("Exit");
         exitButton.setBounds(800,30,100,50);
         exitButton.setBackground(Color.white);
@@ -54,6 +58,8 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         add(secondPlace);
         add(exitButton);
         add(playAgain);
+        add(laps);
+        add(waiting);
 
         StartAnimation();
     }
@@ -90,10 +96,6 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
             Client.getForeignKart().getCurrentImage().paintIcon(this, g, Client.getForeignKart().getLocation().x,
                         Client.getForeignKart().getLocation().y);
         }
-        if(Client.getForeignKart() == null)
-        {
-            add(waiting);
-        }
     }
 
     public void StartAnimation()
@@ -116,9 +118,8 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
     {
         if(event.getSource() == animationTimer)
         {
-            //Call repaint function to update display
-            repaint();
-
+            repaint();        //Call repaint function to update display
+            updateRaceInformation();       //update race information displayed on the screen
             Client.getOwnKart().displaceKart();         //update kart position
             Client.sendOwnKart();       //send ownKart information to clientHandler everytime kart is displaced
             collisionDetection();           // detect collisions (between karts and with edges)
@@ -127,10 +128,6 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         {
             StopAnimation();
             Client.shutdownClient();
-        }
-        if(event.getSource() == playAgain)
-        {
-
         }
     }
 
@@ -141,21 +138,25 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_UP)                        //increase kart1 speed if up key is pressed
+        if(Client.getForeignKart() != null)
         {
-            Client.getOwnKart().increaseSpeed();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN)                //decrease kart1 speed if down key is pressed
-        {
-            Client.getOwnKart().decreaseSpeed();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_LEFT)                //turn kart1 left if left key is pressed
-        {
-            Client.getOwnKart().updateDirection("left");
-        }
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT)               //turn kart1 right if right key is pressed
-        {
-            Client.getOwnKart().updateDirection("right");
+            //condition that prevents local racer from racing until another racer is connected
+            if (e.getKeyCode() == KeyEvent.VK_UP)                        //increase kart1 speed if up key is pressed
+            {
+                Client.getOwnKart().increaseSpeed();
+            }
+            if (e.getKeyCode() == KeyEvent.VK_DOWN)                //decrease kart1 speed if down key is pressed
+            {
+                Client.getOwnKart().decreaseSpeed();
+            }
+            if (e.getKeyCode() == KeyEvent.VK_LEFT)                //turn kart1 left if left key is pressed
+            {
+                Client.getOwnKart().updateDirection("left");
+            }
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT)               //turn kart1 right if right key is pressed
+            {
+                Client.getOwnKart().updateDirection("right");
+            }
         }
     }
 
@@ -164,13 +165,19 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
 
     }
 
-    public void collisionDetection()                //collision detection method
+    private void updateRaceInformation()
+    {
+        Client.getOwnKart().updateLaps();
+        laps.setText("Laps: " + Client.getOwnKart().getLapCounter());
+    }
+
+    private void collisionDetection()                //collision detection method
     {
         collisionBetweenKarts();
         collisionWithBoundaries();
     }
 
-    public void collisionBetweenKarts()
+    private void collisionBetweenKarts()
     {
         if (Client.getForeignKart() != null)
         {
@@ -190,13 +197,13 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                     //change kart alive status to false
                     Client.getOwnKart().setAlive(false);
                     Client.getForeignKart().setAlive(false);
-                    Client.deleteKarts();
+                    StopAnimation();
                 }
             }
         }
     }
 
-    public void collisionWithBoundaries()
+    private void collisionWithBoundaries()
     {
         //Collision detection between karts and racetrack bounds
         if(Client.getOwnKart().checkOuterCollision())
@@ -207,6 +214,7 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                     " Kart "+ Client.getForeignKart().getKartColor() +" wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
             //change kart alive status to false
             Client.getOwnKart().setAlive(false);
+            StopAnimation();
         }
 
         if(Client.getOwnKart().checkInnerCollision(new Rectangle( 150, 200, 550, 300 )))     //inner edge bounds
@@ -217,6 +225,7 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                     " Kart" + Client.getForeignKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
             //change kart alive status to false
             Client.getOwnKart().setAlive(false);
+            StopAnimation();
         }
 
         if(Client.getForeignKart() != null)
@@ -227,6 +236,7 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                         " Kart " + Client.getOwnKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
                 //change kart alive status to false
                 Client.getForeignKart().setAlive(false);
+                StopAnimation();
             }
 
             if (Client.getForeignKart().checkInnerCollision(new Rectangle(150, 200, 550, 300)))     //inner edge bounds
@@ -236,6 +246,7 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                         " Kart " + Client.getOwnKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
                 //change kart alive status to false
                 Client.getForeignKart().setAlive(false);
+                StopAnimation();
             }
         }
     }
