@@ -10,9 +10,6 @@ class ClientHandler implements Runnable
 	private String line;
 	// Declare an output stream to client		
 	private DataOutputStream outputStream;
-   
-   private ObjectInput objectInput = null;
-   private ObjectOutput objectOutput = null;
 
    private static Kart kartBlue = null;
    private static Kart kartRed = null;
@@ -40,14 +37,6 @@ class ClientHandler implements Runnable
    		outputStream = new DataOutputStream(
    			server.getOutputStream()
    		);
-         
-         objectInput = new ObjectInputStream(
-            server.getInputStream()
-         );
-         
-         objectOutput = new ObjectOutputStream(
-            server.getOutputStream()
-         );
                   
          do
          {
@@ -72,8 +61,6 @@ class ClientHandler implements Runnable
    		// Comment out/remove the outputStream and server close statements if server should remain live
    		outputStream.close();
    		inputStream.close();
-         objectOutput.close();
-         objectInput.close();
    		server.close();
       } 
       catch (Exception e) 
@@ -118,17 +105,6 @@ class ClientHandler implements Runnable
       {
          return null;
       }
-   }
-   
-   private void sendKart(Kart kartToSend) 
-   {
-      try 
-      {
-         objectOutput.writeObject(kartToSend);
-         objectOutput.flush();
-      } catch (Exception e) 
-      {
-         System.out.println("Can't send kart");}
    }
 
    private void sendOwnKart()
@@ -295,25 +271,25 @@ class ClientHandler implements Runnable
       }
 
       if (responseParts[0].equals("own_kart_update")) {
-            receiveKart(response);
+         receiveKart(response);
 
-            switch (kartType){
-               case "Blue":
+         switch (kartType){
+            case "Blue":
 
-                  if(kartRed != null) {
-                     sendForeignKart();
-                  }
+               if(kartRed != null) {
+                  sendForeignKart();
+               }
 
-                  break;
+               break;
 
-               case "Red":
+            case "Red":
 
-                  if(kartBlue != null) {
-                     sendForeignKart();
-                  }
+               if(kartBlue != null) {
+                  sendForeignKart();
+               }
 
-                  break;
-            }
+               break;
+         }
       }
    }
 }

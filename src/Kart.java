@@ -6,7 +6,7 @@ public class Kart implements Serializable{
     private Point location;                             //current kart location
     private float speed;                                //current kart speed
     private int direction;                              //moving kart direction
-    private int imageIndex = 0;                         //current image index in loop
+    private int imageIndex;                         //current image index in loop
     private ImageIcon[] kartImages;                     //kart 2 image array
     private String kartColor;                           //kart color attribute
     private final int totalImages = 16;                 //number of images
@@ -25,6 +25,7 @@ public class Kart implements Serializable{
         alive = true;                                   //kart is alive
         lapCounter = 1;
         threeQuaterWayMark = false;
+        imageIndex = 0;
     }
 
     public void initialPosition(int x, int y)

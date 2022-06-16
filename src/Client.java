@@ -14,9 +14,6 @@ public class Client
 	// Declare input stream from server and string to store input received from server
 	private static BufferedReader inputStream = null;
 	private static String responseLine;
-   
-   private static ObjectOutput objectOutput = null;
-   private static ObjectInput objectInput = null;
 	
 	// replace "localhost" with the remote server address, if needed
 	// 5000 is the server port
@@ -66,14 +63,6 @@ public class Client
 					clientSocket.getInputStream()
 				)
 			);
-         
-         objectOutput = new ObjectOutputStream(
-            clientSocket.getOutputStream()
-         );
-         
-         objectInput = new ObjectInputStream(
-            clientSocket.getInputStream()
-         );
 		} 
 		catch (UnknownHostException e)
 		{
@@ -85,11 +74,13 @@ public class Client
 		}
 
 		// Write data to the socket
-		if ( clientSocket != null && outputStream != null && inputStream != null && objectOutput != null && objectInput != null )
+		if ( clientSocket != null && outputStream != null && inputStream != null)
         {
 			try
 			{
-            initialise();           //initialise kart of choice
+                initialise();           //initialise kart of choice
+                window = new Frame();   //initialise frame object
+                window.setVisible(true);//make window visible
             do 
             {
                responseLine = receiveMessage();
@@ -111,8 +102,6 @@ public class Client
 				// close the input/output streams and socket
 				outputStream.close();
 				inputStream.close();
-            objectOutput.close();
-            objectInput.close();
 				clientSocket.close();
 			}
 			catch (UnknownHostException e)
@@ -130,10 +119,6 @@ public class Client
    {
       // initialise our client's own kart object
       ownKart = new Kart( kartType );
-
-       window = new Frame();   //initialise frame object
-       window.setVisible(true);//make window visible
-
 
        if(ownKart.getKartColor().equals("Red")) {
            ownKart.initialPosition(425, 500);                 //ownKart initial position
@@ -184,6 +169,7 @@ public class Client
         ownKart.setLocationY(Integer.parseInt(updateParts[3]));
         ownKart.setSpeed(Float.parseFloat(updateParts[4]));
         ownKart.setKartColor(updateParts[5]);
+        kartType = updateParts[5];
         ownKart.populateImageArray();
     }
 
@@ -279,14 +265,7 @@ public class Client
    {
        //method closes the window and end the program
        window.ParentCloseMe();
+       deleteKarts();
        sendMessage("CLOSE");
    }
-
-    public static void playAgain()
-    {
-        deleteKarts();
-        sendMessage("play_again");
-        window.ParentCloseMe();
-        initialise();
-    }
 }

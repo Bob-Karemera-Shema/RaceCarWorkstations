@@ -14,7 +14,6 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
     private JLabel firstPlace;                           //Race information label
     private JLabel secondPlace;                           //Race information label
     private JButton exitButton;                         //Exit button
-    private JButton playAgain;                          //Play again button
     private JLabel waiting;
     private JLabel laps;
     private JFrame parent;
@@ -45,11 +44,6 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         exitButton.setBackground(Color.white);
         exitButton.addActionListener(this);
 
-        playAgain = new JButton("Play Again");
-        playAgain.setBounds(700,30,100,50);
-        playAgain.setBackground(Color.white);
-        playAgain.addActionListener(this);
-
         waiting = new JLabel("Waiting for second player to connect...");
         waiting.setBounds(320,300,300,100);
 
@@ -57,7 +51,6 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         add(firstPlace);
         add(secondPlace);
         add(exitButton);
-        add(playAgain);
         add(laps);
         add(waiting);
 
