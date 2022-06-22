@@ -10,10 +10,8 @@ public class Kart implements Serializable{
     private ImageIcon[] kartImages;                     //kart 2 image array
     private String kartColor;                           //kart color attribute
     private final int totalImages = 16;                 //number of images
-    private boolean alive;
-    private String collisionArea;
     private int lapCounter;
-    private boolean threeQuaterWayMark;                 // helps ensure a kart has travelled three quarters of the track distance
+    private boolean threeQuarterWayMark;                 // helps ensure a kart has travelled three quarters of the track distance
                                                         // before reaching the finish line in order to increment laps
                                                         // done when the kart reaches the finish line
     public Kart(String kartColor)
@@ -22,9 +20,8 @@ public class Kart implements Serializable{
         direction = 0;                                  //initial kart direction
         this.kartColor = kartColor;                     //Assign kart color
         kartImages = new ImageIcon[totalImages];       //initialise image array
-        alive = true;                                   //kart is alive
         lapCounter = 1;
-        threeQuaterWayMark = false;
+        threeQuarterWayMark = false;
         imageIndex = 0;
     }
 
@@ -81,18 +78,6 @@ public class Kart implements Serializable{
     {
         //return current kart image
         return kartColor;
-    }
-
-    public boolean isAlive()
-    {
-        //return whether kart is alive or not
-        return alive;
-    }
-
-    public String getCollisionArea()
-    {
-        //return area of collision
-        return collisionArea;
     }
 
     public void displaceKart()
@@ -268,10 +253,6 @@ public class Kart implements Serializable{
 
     public void setLocationY(int newY) { location.y = newY; }           //set kart Y coordinate to new coordinate
 
-    public void setAlive(boolean newLife) { alive = newLife;}           //set new kart alive status
-
-    public void setCollisionArea(String area) { collisionArea = area;}           //set kart collision area
-
     public boolean checkOuterCollision()                    //check whether kart collides with outer bound
     {
         //( 50, 100, 750, 500 ) outer edge
@@ -318,16 +299,16 @@ public class Kart implements Serializable{
 
     public void updateLaps()
     {
-        if(threeQuaterWayMark && location.x + 10 <= 425 && location.y > 400 &&
+        if(threeQuarterWayMark && location.x + 10 <= 425 && location.y > 400 &&
                 location.y < 700 && direction == 0)
         {
-            threeQuaterWayMark = false;
+            threeQuarterWayMark = false;
             lapCounter += 1;
         }
 
         if(location.x >= 650 && location.y >= 325 && location.y < 345)
         {
-            threeQuaterWayMark = true;
+            threeQuarterWayMark = true;
         }
     }
 

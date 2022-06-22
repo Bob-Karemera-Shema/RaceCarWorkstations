@@ -190,9 +190,6 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
                     Client.getForeignKart().stopKart();
                     JOptionPane.showMessageDialog(this, "Karts crashed into each other!" +
                             " No winner for this race", "Collision Detected", JOptionPane.ERROR_MESSAGE);
-                    //change kart alive status to false
-                    Client.getOwnKart().setAlive(false);
-                    Client.getForeignKart().setAlive(false);
                     StopAnimation();
                 }
             }
@@ -205,43 +202,31 @@ public class RaceTrack extends JPanel implements ActionListener, KeyListener
         if(Client.getOwnKart().checkOuterCollision())
         {
             Client.getOwnKart().stopKart();
-            Client.getOwnKart().setCollisionArea("track_edge");
             JOptionPane.showMessageDialog(this, "Kart" + Client.getOwnKart().getKartColor() + " crashed!" +
                     " Kart "+ Client.getForeignKart().getKartColor() +" wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
-            //change kart alive status to false
-            Client.getOwnKart().setAlive(false);
             StopAnimation();
         }
 
         if(Client.getOwnKart().checkInnerCollision(new Rectangle( 150, 200, 550, 300 )))     //inner edge bounds
         {
             Client.getOwnKart().stopKart();
-            Client.getOwnKart().setCollisionArea("grass");
             JOptionPane.showMessageDialog(this, "Kart" + Client.getOwnKart().getKartColor() + " crashed!" +
                     " Kart" + Client.getForeignKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
-            //change kart alive status to false
-            Client.getOwnKart().setAlive(false);
             StopAnimation();
         }
 
         if(Client.getForeignKart() != null)
         {
             if (Client.getForeignKart().checkOuterCollision()) {
-                Client.getForeignKart().setCollisionArea("track_edge");
                 JOptionPane.showMessageDialog(this, "Kart" + Client.getForeignKart().getKartColor() + " crashed!" +
                         " Kart " + Client.getOwnKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
-                //change kart alive status to false
-                Client.getForeignKart().setAlive(false);
                 StopAnimation();
             }
 
             if (Client.getForeignKart().checkInnerCollision(new Rectangle(150, 200, 550, 300)))     //inner edge bounds
             {
-                Client.getForeignKart().setCollisionArea("grass");
                 JOptionPane.showMessageDialog(this, "Kart" + Client.getForeignKart().getKartColor() + " crashed!" +
                         " Kart " + Client.getOwnKart().getKartColor() + " wins.", "Collision Detected", JOptionPane.INFORMATION_MESSAGE);
-                //change kart alive status to false
-                Client.getForeignKart().setAlive(false);
                 StopAnimation();
             }
         }
