@@ -118,7 +118,8 @@ class ClientHandler implements Runnable
                     kartBlue.getLocationX() + " " +
                     kartBlue.getLocationY() + " " +
                     kartBlue.getSpeed() + " " +
-                    kartBlue.getKartColor()
+                    kartBlue.getKartColor() + " " +
+                    kartBlue.getLapCounter()
             );
             break;
 
@@ -128,7 +129,8 @@ class ClientHandler implements Runnable
                     kartRed.getLocationX() + " " +
                     kartRed.getLocationY() + " " +
                     kartRed.getSpeed() + " " +
-                    kartBlue.getKartColor()
+                    kartRed.getKartColor() + " " +
+                    kartRed.getLapCounter()
             );
             break;
       }
@@ -145,7 +147,8 @@ class ClientHandler implements Runnable
                     kartRed.getDirection() + " " +
                     kartRed.getLocationX() + " " +
                     kartRed.getLocationY() + " " +
-                    kartRed.getSpeed()
+                    kartRed.getSpeed() + " " +
+                    kartRed.getLapCounter()
             );
             break;
 
@@ -154,7 +157,8 @@ class ClientHandler implements Runnable
                     kartBlue.getDirection() + " " +
                     kartBlue.getLocationX() + " " +
                     kartBlue.getLocationY() + " " +
-                    kartBlue.getSpeed()
+                    kartBlue.getSpeed() + " " +
+                    kartBlue.getLapCounter()
             );
             break;
       }
@@ -173,6 +177,7 @@ class ClientHandler implements Runnable
             kartBlue.setLocationX(Integer.parseInt(updateParts[2]));
             kartBlue.setLocationY(Integer.parseInt(updateParts[3]));
             kartBlue.setSpeed(Float.parseFloat(updateParts[4]));
+            kartBlue.setKartLaps(Integer.parseInt(updateParts[5]));
             break;
             
          case "Red":
@@ -181,6 +186,7 @@ class ClientHandler implements Runnable
             kartRed.setLocationX(Integer.parseInt(updateParts[2]));
             kartRed.setLocationY(Integer.parseInt(updateParts[3]));
             kartRed.setSpeed(Float.parseFloat(updateParts[4]));
+            kartRed.setKartLaps(Integer.parseInt(updateParts[5]));
             break;
       }
    }

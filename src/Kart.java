@@ -335,4 +335,8 @@ public class Kart implements Serializable{
     {
         return lapCounter;
     }
+
+    public void setKartLaps(int lapUpdate) {
+        lapCounter = lapUpdate;
+    }
 }

@@ -131,7 +131,8 @@ public class Client
               ownKart.getDirection() + " " +
               ownKart.getLocationX() + " " +
               ownKart.getLocationY() + " " +
-              ownKart.getSpeed()
+              ownKart.getSpeed() + " " +
+              ownKart.getLapCounter()
       );
    }
 
@@ -152,7 +153,8 @@ public class Client
               ownKart.getDirection() + " " +
               ownKart.getLocationX() + " " +
               ownKart.getLocationY() + " " +
-              ownKart.getSpeed()
+              ownKart.getSpeed() + " " +
+              ownKart.getLapCounter()
       );
 
       //sendKart();
@@ -169,6 +171,7 @@ public class Client
         ownKart.setLocationY(Integer.parseInt(updateParts[3]));
         ownKart.setSpeed(Float.parseFloat(updateParts[4]));
         ownKart.setKartColor(updateParts[5]);
+        ownKart.setKartLaps(Integer.parseInt(updateParts[6]));
         kartType = updateParts[5];
         ownKart.populateImageArray();
     }
@@ -201,6 +204,7 @@ public class Client
            foreignKart.setLocationX(Integer.parseInt(updateParts[2]));
            foreignKart.setLocationY(Integer.parseInt(updateParts[3]));
            foreignKart.setSpeed(Float.parseFloat(updateParts[4]));
+           foreignKart.setKartLaps(Integer.parseInt(updateParts[5]));
        }
    }
 
